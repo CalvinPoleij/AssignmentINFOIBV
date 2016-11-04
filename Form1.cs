@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -25,32 +26,38 @@ namespace INFOIBV
         {
             InitializeComponent();
         }
-        
+
         #region Buttons
 
         private void LoadImageButton_Click(object sender, EventArgs e)
         {
-            if (openImageDialog.ShowDialog() == DialogResult.OK)             // Open File Dialog
+            if (openImageDialog.ShowDialog() == DialogResult.OK)            // Open File Dialog
             {
                 string file = openImageDialog.FileName;                     // Get the file name
                 imageFileName.Text = file;                                  // Show file name
-                if (inputImage != null) inputImage.Dispose();               // Reset image
+
+                if (inputImage != null)
+                    inputImage.Dispose();                                   // Reset image
+
                 inputImage = new Bitmap(file);                              // Create new Bitmap from file
-                if (inputImage.Height <= 0 || inputImage.Width <= 0 ||
-                    inputImage.Height > 512 || inputImage.Width > 512) // Dimension check
-                    MessageBox.Show("Error: Image dimensions have to be > 0 and <= 512!");
-                else
+
+                // Dimension check. Resizes the image to fit inside the picture box.
+                if (inputImage.Height <= 0 || inputImage.Width <= 0 || inputImage.Height > 512 || inputImage.Width > 512) 
                 {
-                    pictureBox1.Image = inputImage;                 // Display input image
-
-                    // Save the original loaded inputImage in a separate array.
-                    originalImage = new Color[inputImage.Width, inputImage.Height];
-
-                    // Copy the input Bitmap to an array of colors.
-                    for (int x = 0; x < inputImage.Width; x++)
-                        for (int y = 0; y < inputImage.Height; y++)
-                            originalImage[x, y] = inputImage.GetPixel(x, y);
+                    float scale = Math.Min(512 / (float)inputImage.Width, 512 / (float)inputImage.Height);
+                    inputImage = new Bitmap(inputImage, (int)(inputImage.Width * scale), (int)(inputImage.Height * scale));
                 }
+
+                // Display input image
+                pictureBox1.Image = inputImage;
+
+                // Save the original loaded inputImage in a separate array.
+                originalImage = new Color[inputImage.Width, inputImage.Height];
+
+                // Copy the input Bitmap to an array of colors.
+                for (int x = 0; x < inputImage.Width; x++)
+                    for (int y = 0; y < inputImage.Height; y++)
+                        originalImage[x, y] = inputImage.GetPixel(x, y);
             }
         }
 
