@@ -28,6 +28,8 @@ namespace INFOIBV
         Color backgroundColor = Color.Black;
         Color foregroundColor = Color.White;
 
+        Dictionary<int, DetectedObject> detectedObjects;
+
         public INFOIBV()
         {
             InitializeComponent();
@@ -344,14 +346,13 @@ namespace INFOIBV
         // Labels all the objects in the image. (image should be binary) (4-connectivity based: Only the north and west neighbours are checked)
         private void TwoPassConnectedComponentLabeling()
         {
+            detectedObjects = new Dictionary<int, DetectedObject>();
+
             Dictionary<int, LinkedList<int>> regionLinks = new Dictionary<int, LinkedList<int>>();
             int currentLabel = 1;
 
             // Initialize labels
-            RegionPixel[,] pixels = new RegionPixel[inputImage.Width, inputImage.Height];
-            for (int x = 0; x < inputImage.Width; x++)
-                for (int y = 0; y < inputImage.Height; y++)
-                    pixels[x, y] = new RegionPixel(new Point(x, y));
+            int[,] labels = new int[inputImage.Width, inputImage.Height];
 
             // First pass: Detect different components and label them.
             for (int x = 0; x < inputImage.Width; x++)
@@ -361,64 +362,68 @@ namespace INFOIBV
                     // Only check the pixels that are not part of the background
                     if (image[x, y] != backgroundColor)
                     {
-                        int westLabel = 0, northLabel = 0;
+                        // List of all qualified neighbours of the current pixel.
+                        List<int> neighbours = new List<int>();
 
                         // Set the neighbouring pixels (if their index is in range).
                         if (x > 0 && y > 0)
                         {
-                            westLabel = pixels[x - 1, y].label;
-                            northLabel = pixels[x, y - 1].label;
+                            neighbours.Add(labels[x - 1, y]);       // West
+                            neighbours.Add(labels[x, y - 1]);       // North
                         }
 
-                        // Find the smallest neighbour.
-                        int smallestLabel = Math.Min(westLabel, northLabel);
+                        // Remove all neighbours with a background label.
+                        neighbours.RemoveAll(i => i == 0);
 
                         // If the resulting smallestLabel is zero (the background label), no neighbours were found.
-                        if (smallestLabel == 0)
+                        if (neighbours.Count == 0)
                         {
                             // If no neighbours were found, create a new label.
                             regionLinks.Add(currentLabel, new LinkedList<int>());
                             regionLinks[currentLabel].AddFirst(currentLabel);
-                            pixels[x, y].label = currentLabel;
+                            labels[x, y] = currentLabel;
                             currentLabel++;
                         }
                         else
                         {
                             // Set the current pixel label to the smallest label within the neighbours list.
-                            pixels[x, y].label = smallestLabel;
+                            int smallestLabel = neighbours.Min();
+                            labels[x, y] = smallestLabel;
 
-                            // Check the west and north neighbours. Merge equivalent labels.
-                            if (!regionLinks[smallestLabel].Contains(westLabel) && westLabel < regionLinks[smallestLabel].First.Value)
-                                regionLinks[smallestLabel].AddFirst(westLabel);
-
-                            if (!regionLinks[smallestLabel].Contains(northLabel) && northLabel < regionLinks[smallestLabel].First.Value)
-                                regionLinks[smallestLabel].AddFirst(northLabel);
+                            // Check the neighbours and merge equivalent labels.
+                            foreach (int label in neighbours)
+                            {
+                                if (!regionLinks[smallestLabel].Contains(label) && label < regionLinks[smallestLabel].First.Value)
+                                    regionLinks[smallestLabel].AddFirst(label);
+                            }
                         }
                     }
                 }
             }
 
             // Second pass: Relabel the pixels with the lowest label value, so that pixels of the same region all have the same label.
-            List<int> regionValues = new List<int>();
-
             for (int x = 0; x < inputImage.Width; x++)
             {
                 for (int y = 0; y < inputImage.Height; y++)
                 {
-                    if (pixels[x,y].label != 0)
+                    if (labels[x,y] != 0)
                     {
-                        int label = regionLinks[pixels[x, y].label].First.Value;
-                        pixels[x, y].label = label;
+                        // Relabel the pixel.
+                        int label = regionLinks[labels[x, y]].First.Value;
+                        labels[x, y] = label;
 
-                        if (!regionValues.Contains(label))
-                            regionValues.Add(label);
+                        // If a new label is detected, add an object to the detectedObjects.
+                        if (!detectedObjects.ContainsKey(label))
+                            detectedObjects.Add(label, new DetectedObject());
 
+                        // Assign pixel to its label group.
+                        detectedObjects[label].AddPixel(x, y);
+
+                        // Set the pixel color.
                         image[x, y] = Color.Red;
                     }
                 }
             }
-
-            MessageBox.Show(regionValues.Count.ToString());
         }
 
         #endregion
@@ -487,15 +492,13 @@ namespace INFOIBV
         #endregion
     }
 
-    // Helper class used for Connected Component Labeling
-    public class RegionPixel
+    public class DetectedObject
     {
-        public int label = 0;
-        public Point position;
+        public List<Point> pixels = new List<Point>();
 
-        public RegionPixel(Point position)
+        public void AddPixel(int x, int y)
         {
-            this.position = position;
+            pixels.Add(new Point(x, y));
         }
     }
 }
