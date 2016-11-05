@@ -4,12 +4,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 // Helpful links:
 // https://softwarebydefault.com/2013/05/19/image-erosion-dilation/
 // https://en.wikipedia.org/wiki/Median_filter
+// https://en.wikipedia.org/wiki/Connected-component_labeling
 // REMOVE THIS!!!!
 
 namespace INFOIBV
@@ -21,6 +23,10 @@ namespace INFOIBV
 
         private Color[,] image;                                                 // Create array to speed-up operations (Bitmap functions are very slow)
         private Color[,] originalImage;                                         // The colours of the original unchanged input image file.
+
+        // Determine background- and foreground colors of a binary image.
+        Color backgroundColor = Color.Black;
+        Color foregroundColor = Color.White;
 
         public INFOIBV()
         {
@@ -225,6 +231,24 @@ namespace INFOIBV
 
             // Apply image processing effect.
             ApplyThreshold();
+
+            ShowOutputImage();
+        }
+
+        private void componentLabelingButton_Click(object sender, EventArgs e)
+        {
+            // Check if there is an input image.
+            if (inputImage == null)
+            {
+                MessageBox.Show("There is no input image!");
+                return;
+            }
+
+            PrepareImageProcessing();
+
+            ApplyThreshold(true);
+            TwoPassConnectedComponentLabeling();
+
             ShowOutputImage();
         }
 
@@ -235,14 +259,13 @@ namespace INFOIBV
         // Creates a negative image. (included as an example in the template)
         private void ApplyNegative()
         {
-            for (int x = 0; x < inputImage.Size.Width; x++)
+            for (int x = 0; x < inputImage.Width; x++)
             {
-                for (int y = 0; y < inputImage.Size.Height; y++)
+                for (int y = 0; y < inputImage.Height; y++)
                 {
                     Color pixelColor = image[x, y];                                                                     // Get the pixel color at coordinate (x,y).
                     Color updatedColor = Color.FromArgb(255 - pixelColor.R, 255 - pixelColor.G, 255 - pixelColor.B);    // Negative color.
                     image[x, y] = updatedColor;                                                                         // Set the new pixel color at coordinate (x,y).
-                    progressBar.PerformStep();                                                                          // Increment progress bar.
                 }
             }
         }
@@ -250,9 +273,9 @@ namespace INFOIBV
         // Creates a grayscaled image.
         private void ApplyGrayScale()
         {
-            for (int x = 0; x < inputImage.Size.Width; x++)
+            for (int x = 0; x < inputImage.Width; x++)
             {
-                for (int y = 0; y < inputImage.Size.Height; y++)
+                for (int y = 0; y < inputImage.Height; y++)
                 {
                     Color pixelColor = image[x, y];                                                                 // Get the pixel color at coordinate (x,y).
 
@@ -261,24 +284,33 @@ namespace INFOIBV
                     Color updatedColor = Color.FromArgb(pixelColor.A, grayScale, grayScale, grayScale);             // The new color, now with grayscale applied.
 
                     image[x, y] = updatedColor;                                                                     // Set the new pixel color at coordinate (x,y).
-                    progressBar.PerformStep();                                                                      // Increment progress bar.
                 }
             }
         }
 
         // Applies thresholding to an image, given a threshold value. Returns a binary image.
-        private void ApplyThreshold()
+        private void ApplyThreshold(bool negative = false)
         {
+            double thresholdValue = thresholdTracker.Value;
+
+            if (negative)
+            {
+                ApplyNegative();
+                thresholdValue = thresholdTracker.Maximum - thresholdValue;
+            }
+
+            thresholdValue /= thresholdTracker.Maximum;
+
             // Convert image to black and white based on average brightness
             for (int y = 0; y < inputImage.Height; y++)
             {
                 for (int x = 0; x < inputImage.Width; x++)
                 {
                     // Set this pixel to black or white based on threshold
-                    if (image[x, y].GetBrightness() >= (double)thresholdTracker.Value / thresholdTracker.Maximum)
-                        image[x, y] = Color.White;
+                    if (image[x, y].GetBrightness() >= thresholdValue)
+                        image[x, y] = foregroundColor;
                     else
-                        image[x, y] = Color.Black;
+                        image[x, y] = backgroundColor;
                 }
             }
         }
@@ -289,9 +321,9 @@ namespace INFOIBV
             contrast = Clamp(contrast, -100, 100);
             contrast = Math.Pow((100 + contrast) / 100, 2);
 
-            for (int x = 0; x < inputImage.Size.Width; x++)
+            for (int x = 0; x < inputImage.Width; x++)
             {
-                for (int y = 0; y < inputImage.Size.Height; y++)
+                for (int y = 0; y < inputImage.Height; y++)
                 {
                     Color pixelColor = image[x, y];                                                                 // Get the pixel color at coordinate (x,y).
 
@@ -305,15 +337,88 @@ namespace INFOIBV
                     blue = Clamp(blue, 0, 255);
 
                     image[x, y] = Color.FromArgb((byte)red, (byte)green, (byte)blue);                               // Set the new pixel color at coordinate (x,y).
-                    progressBar.PerformStep();                                                                      // Increment progress bar.
                 }
             }
         }
 
-        // Applies opening by reconstruction to an image.
-        private void ApplyOpenReconstruction()
+        // Labels all the objects in the image. (image should be binary) (4-connectivity based: Only the north and west neighbours are checked)
+        private void TwoPassConnectedComponentLabeling()
         {
+            Dictionary<int, LinkedList<int>> regionLinks = new Dictionary<int, LinkedList<int>>();
+            int currentLabel = 1;
 
+            // Initialize labels
+            RegionPixel[,] pixels = new RegionPixel[inputImage.Width, inputImage.Height];
+            for (int x = 0; x < inputImage.Width; x++)
+                for (int y = 0; y < inputImage.Height; y++)
+                    pixels[x, y] = new RegionPixel(new Point(x, y));
+
+            // First pass: Detect different components and label them.
+            for (int x = 0; x < inputImage.Width; x++)
+            {
+                for (int y = 0; y < inputImage.Height; y++)
+                {
+                    // Only check the pixels that are not part of the background
+                    if (image[x, y] != backgroundColor)
+                    {
+                        int westLabel = 0, northLabel = 0;
+
+                        // Set the neighbouring pixels (if their index is in range).
+                        if (x > 0 && y > 0)
+                        {
+                            westLabel = pixels[x - 1, y].label;
+                            northLabel = pixels[x, y - 1].label;
+                        }
+
+                        // Find the smallest neighbour.
+                        int smallestLabel = Math.Min(westLabel, northLabel);
+
+                        // If the resulting smallestLabel is zero (the background label), no neighbours were found.
+                        if (smallestLabel == 0)
+                        {
+                            // If no neighbours were found, create a new label.
+                            regionLinks.Add(currentLabel, new LinkedList<int>());
+                            regionLinks[currentLabel].AddFirst(currentLabel);
+                            pixels[x, y].label = currentLabel;
+                            currentLabel++;
+                        }
+                        else
+                        {
+                            // Set the current pixel label to the smallest label within the neighbours list.
+                            pixels[x, y].label = smallestLabel;
+
+                            // Check the west and north neighbours. Merge equivalent labels.
+                            if (!regionLinks[smallestLabel].Contains(westLabel) && westLabel < regionLinks[smallestLabel].First.Value)
+                                regionLinks[smallestLabel].AddFirst(westLabel);
+
+                            if (!regionLinks[smallestLabel].Contains(northLabel) && northLabel < regionLinks[smallestLabel].First.Value)
+                                regionLinks[smallestLabel].AddFirst(northLabel);
+                        }
+                    }
+                }
+            }
+
+            // Second pass: Relabel the pixels with the lowest label value, so that pixels of the same region all have the same label.
+            List<int> regionValues = new List<int>();
+
+            for (int x = 0; x < inputImage.Width; x++)
+            {
+                for (int y = 0; y < inputImage.Height; y++)
+                {
+                    if (pixels[x,y].label != 0)
+                    {
+                        int label = regionLinks[pixels[x, y].label].First.Value;
+                        pixels[x, y].label = label;
+
+                        if (!regionValues.Contains(label))
+                            regionValues.Add(label);
+
+                        image[x, y] = Color.Red;
+                    }
+                }
+            }
+
+            MessageBox.Show(regionValues.Count.ToString());
         }
 
         #endregion
@@ -361,10 +466,14 @@ namespace INFOIBV
                 for (int y = 0; y < inputImage.Height; y++)
                     outputImage.SetPixel(x, y, image[x, y]);
 
-            pictureBox2.Image = outputImage;                                // Display output image
-            progressBar.Value = 1;                                    // Hide progress bar
+            // Display output image
+            pictureBox2.Image = outputImage;
+
+            // Hide progress bar
+            progressBar.Value = 1;
         }
 
+        // Clamps a value between a minimum and maximum value.
         private double Clamp(double value, double min, double max)
         {
             if (value < min)
@@ -376,5 +485,17 @@ namespace INFOIBV
         }
 
         #endregion
+    }
+
+    // Helper class used for Connected Component Labeling
+    public class RegionPixel
+    {
+        public int label = 0;
+        public Point position;
+
+        public RegionPixel(Point position)
+        {
+            this.position = position;
+        }
     }
 }

@@ -42,6 +42,8 @@
             this.switchButton = new System.Windows.Forms.Button();
             this.revertOriginalButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.contrastTracker = new System.Windows.Forms.TrackBar();
+            this.contrastButton = new System.Windows.Forms.Button();
             this.thresholdTracker = new System.Windows.Forms.TrackBar();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label7 = new System.Windows.Forms.Label();
@@ -59,11 +61,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.panel6 = new System.Windows.Forms.Panel();
-            this.contrastButton = new System.Windows.Forms.Button();
-            this.contrastTracker = new System.Windows.Forms.TrackBar();
+            this.componentLabelingButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.contrastTracker)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.thresholdTracker)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -72,7 +74,6 @@
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.contrastTracker)).BeginInit();
             this.SuspendLayout();
             // 
             // LoadImageButton
@@ -219,6 +220,7 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel1.BackColor = System.Drawing.Color.LavenderBlush;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.componentLabelingButton);
             this.panel1.Controls.Add(this.contrastTracker);
             this.panel1.Controls.Add(this.contrastButton);
             this.panel1.Controls.Add(this.thresholdTracker);
@@ -229,6 +231,28 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(341, 238);
             this.panel1.TabIndex = 19;
+            // 
+            // contrastTracker
+            // 
+            this.contrastTracker.Location = new System.Drawing.Point(204, 53);
+            this.contrastTracker.Maximum = 100;
+            this.contrastTracker.Minimum = -100;
+            this.contrastTracker.Name = "contrastTracker";
+            this.contrastTracker.Size = new System.Drawing.Size(136, 64);
+            this.contrastTracker.TabIndex = 23;
+            this.contrastTracker.TickStyle = System.Windows.Forms.TickStyle.None;
+            // 
+            // contrastButton
+            // 
+            this.contrastButton.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.contrastButton.Location = new System.Drawing.Point(9, 53);
+            this.contrastButton.Margin = new System.Windows.Forms.Padding(4);
+            this.contrastButton.Name = "contrastButton";
+            this.contrastButton.Size = new System.Drawing.Size(191, 31);
+            this.contrastButton.TabIndex = 22;
+            this.contrastButton.Text = "Apply Contrast";
+            this.contrastButton.UseVisualStyleBackColor = true;
+            this.contrastButton.Click += new System.EventHandler(this.contrastButton_Click);
             // 
             // thresholdTracker
             // 
@@ -424,27 +448,17 @@
             this.panel6.Size = new System.Drawing.Size(1418, 717);
             this.panel6.TabIndex = 21;
             // 
-            // contrastButton
+            // componentLabelingButton
             // 
-            this.contrastButton.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.contrastButton.Location = new System.Drawing.Point(9, 53);
-            this.contrastButton.Margin = new System.Windows.Forms.Padding(4);
-            this.contrastButton.Name = "contrastButton";
-            this.contrastButton.Size = new System.Drawing.Size(191, 31);
-            this.contrastButton.TabIndex = 22;
-            this.contrastButton.Text = "Apply Contrast";
-            this.contrastButton.UseVisualStyleBackColor = true;
-            this.contrastButton.Click += new System.EventHandler(this.contrastButton_Click);
-            // 
-            // contrastTracker
-            // 
-            this.contrastTracker.Location = new System.Drawing.Point(204, 53);
-            this.contrastTracker.Maximum = 100;
-            this.contrastTracker.Minimum = -100;
-            this.contrastTracker.Name = "contrastTracker";
-            this.contrastTracker.Size = new System.Drawing.Size(136, 64);
-            this.contrastTracker.TabIndex = 23;
-            this.contrastTracker.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.componentLabelingButton.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.componentLabelingButton.Location = new System.Drawing.Point(9, 170);
+            this.componentLabelingButton.Margin = new System.Windows.Forms.Padding(4);
+            this.componentLabelingButton.Name = "componentLabelingButton";
+            this.componentLabelingButton.Size = new System.Drawing.Size(191, 31);
+            this.componentLabelingButton.TabIndex = 24;
+            this.componentLabelingButton.Text = "Label Objects";
+            this.componentLabelingButton.UseVisualStyleBackColor = true;
+            this.componentLabelingButton.Click += new System.EventHandler(this.componentLabelingButton_Click);
             // 
             // INFOIBV
             // 
@@ -466,6 +480,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.contrastTracker)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.thresholdTracker)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
@@ -480,7 +495,6 @@
             this.panel5.PerformLayout();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.contrastTracker)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -522,6 +536,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TrackBar contrastTracker;
         private System.Windows.Forms.Button contrastButton;
+        private System.Windows.Forms.Button componentLabelingButton;
     }
 }
 
