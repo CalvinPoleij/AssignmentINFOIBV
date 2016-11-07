@@ -424,7 +424,22 @@ namespace INFOIBV
                     }
                 }
             }
+
+            
+            //Decide type of card (hearts, diamonds, clovers, pikes)
+            //mijn test om te kijken wtf je code precies doet :P
+            //de int in de dictionairy is dus niet het aantal pixels van het object? ik dacht dat je dat opwhatsapp zei :S
+            foreach (KeyValuePair<int, DetectedObject > entry in detectedObjects)
+            {
+                int i = entry.Key;
+                MessageBox.Show(i.ToString());
+                
+            }
+
+           
         }
+
+        
 
         #endregion
 
