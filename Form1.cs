@@ -28,7 +28,9 @@ namespace INFOIBV
         Color backgroundColor = Color.Black;
         Color foregroundColor = Color.White;
 
-        Dictionary<int, DetectedObject> detectedObjects;
+        // Connected Component Labeling.
+        int[,] labelValues;
+        List<DetectedObject> detectedObjects;
 
         public INFOIBV()
         {
@@ -343,16 +345,16 @@ namespace INFOIBV
             }
         }
 
-        // Labels all the objects in the image. (image should be binary) (4-connectivity based: Only the north and west neighbours are checked)
+        // Labels all the objects in the image. (image should be binary) (4-connectivity based: Only the north and west neighbours are checked).
         private void TwoPassConnectedComponentLabeling()
         {
-            detectedObjects = new Dictionary<int, DetectedObject>();
+            detectedObjects = new List<DetectedObject>();
 
-            Dictionary<int, LinkedList<int>> regionLinks = new Dictionary<int, LinkedList<int>>();
+            // Initialize labels (are 0 by default, which is the background label).
+            labelValues = new int[inputImage.Width, inputImage.Height];
+
+            Dictionary<int, Label> labels = new Dictionary<int, Label>();
             int currentLabel = 1;
-
-            // Initialize labels
-            int[,] labels = new int[inputImage.Width, inputImage.Height];
 
             // First pass: Detect different components and label them.
             for (int x = 0; x < inputImage.Width; x++)
@@ -363,39 +365,26 @@ namespace INFOIBV
                     if (image[x, y] != backgroundColor)
                     {
                         // List of all qualified neighbours of the current pixel.
-                        List<int> neighbours = new List<int>();
-
-                        // Set the neighbouring pixels (if their index is in range).
-                        if (x > 0 && y > 0)
-                        {
-                            neighbours.Add(labels[x - 1, y]);       // West
-                            neighbours.Add(labels[x, y - 1]);       // North
-                        }
-
-                        // Remove all neighbours with a background label.
-                        neighbours.RemoveAll(i => i == 0);
+                        List<int> neighbours = GetNeighbours(x, y);
 
                         // If the resulting smallestLabel is zero (the background label), no neighbours were found.
                         if (neighbours.Count == 0)
                         {
                             // If no neighbours were found, create a new label.
-                            regionLinks.Add(currentLabel, new LinkedList<int>());
-                            regionLinks[currentLabel].AddFirst(currentLabel);
-                            labels[x, y] = currentLabel;
+                            labels.Add(currentLabel, new Label(currentLabel));
+                            labelValues[x, y] = currentLabel;
                             currentLabel++;
                         }
                         else
                         {
                             // Set the current pixel label to the smallest label within the neighbours list.
                             int smallestLabel = neighbours.Min();
-                            labels[x, y] = smallestLabel;
+                            labelValues[x, y] = smallestLabel;
 
                             // Check the neighbours and merge equivalent labels.
                             foreach (int label in neighbours)
-                            {
-                                if (!regionLinks[smallestLabel].Contains(label) && label < regionLinks[smallestLabel].First.Value)
-                                    regionLinks[smallestLabel].AddFirst(label);
-                            }
+                                if (labels[smallestLabel].Root().id != labels[label].Root().id)
+                                    labels[label].Union(labels[smallestLabel]);
                         }
                     }
                 }
@@ -406,24 +395,41 @@ namespace INFOIBV
             {
                 for (int y = 0; y < inputImage.Height; y++)
                 {
-                    if (labels[x,y] != 0)
+                    if (labelValues[x,y] != 0)
                     {
                         // Relabel the pixel.
-                        int label = regionLinks[labels[x, y]].First.Value;
-                        labels[x, y] = label;
+                        int label = labels[labelValues[x, y]].Root().id;
+
+                        DetectedObject detectedObject = detectedObjects.Find(o => o.id == label);
 
                         // If a new label is detected, add an object to the detectedObjects.
-                        if (!detectedObjects.ContainsKey(label))
-                            detectedObjects.Add(label, new DetectedObject());
+                        if (detectedObject == null)
+                        {
+                            detectedObject = new DetectedObject(label);
+                            detectedObjects.Add(detectedObject);
+                        }
 
                         // Assign pixel to its label group.
-                        detectedObjects[label].AddPixel(x, y);
-
-                        // Set the pixel color.
-                        image[x, y] = Color.Red;
+                        detectedObject.AddPixel(x, y);
                     }
                 }
             }
+
+            ColorDetectedObject(detectedObjects[1], Color.Red);
+
+            MessageBox.Show(detectedObjects.Count.ToString());
+        }
+
+        private List<int> GetNeighbours(int x, int y)
+        {
+            List<int> neighbours = new List<int>();
+
+            // Set the neighbouring pixels (if their index is in range).
+                for (int i = x - 1; i <= x + 2 && i < inputImage.Width - 1; i++)
+                    for (int j = y - 1; j <= y + 2 && j < inputImage.Height - 1; j++)
+                        if (i >= 0 && j >= 0 && labelValues[i, j] != 0)
+                            neighbours.Add(labelValues[i, j]);
+            return neighbours;
         }
 
         #endregion
@@ -489,12 +495,63 @@ namespace INFOIBV
             return value;
         }
 
+        private void ColorDetectedObject(DetectedObject detectedObject, Color color)
+        {
+            foreach (Point point in detectedObject.pixels)
+                image[point.X, point.Y] = color;
+        }
+        
         #endregion
+    }
+
+    public class Label
+    {
+        public int id;
+        public Label rootLabel;
+        public int rank = 0;
+
+        public Label(int id)
+        {
+            this.id = id;
+            rootLabel = this;
+        }
+
+        public Label Root()
+        {
+            Label currentNode = this, rootNode = rootLabel;
+
+            while (currentNode != rootNode)
+            {
+                currentNode = rootNode;
+                rootNode = rootNode.rootLabel;
+            }
+
+            rootLabel = rootNode;
+            return rootLabel;
+        }
+
+        public void Union(Label label)
+        {
+            if (label.rank < rank)
+                label.rootLabel = this;
+            else
+            {
+                rootLabel = label;
+                if (rank == label.rank)
+                    label.rank++;
+            }
+        }
     }
 
     public class DetectedObject
     {
+        public int id;
         public List<Point> pixels = new List<Point>();
+
+        public DetectedObject(int id)
+        {
+            this.id = id;
+        }
 
         public void AddPixel(int x, int y)
         {
