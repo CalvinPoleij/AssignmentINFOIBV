@@ -28,7 +28,7 @@ namespace INFOIBV
         Color backgroundColor = Color.Black;
         Color foregroundColor = Color.White;
 
-        Dictionary<int, DetectedObject> detectedObjects;
+        public Dictionary<int, DetectedObject> detectedObjects;
 
         public INFOIBV()
         {
@@ -74,7 +74,7 @@ namespace INFOIBV
             if (outputImage == null)
             {
                 MessageBox.Show("There is no output image to save!");
-                return;                                // Get out if no output image
+                return;                                                     // Get out if no output image
             }
 
             if (saveImageDialog.ShowDialog() == DialogResult.OK)
@@ -423,23 +423,37 @@ namespace INFOIBV
                         image[x, y] = Color.Red;
                     }
                 }
-            }
-
-            
-            //Decide type of card (hearts, diamonds, clovers, pikes)
-            //mijn test om te kijken wtf je code precies doet :P
-            //de int in de dictionairy is dus niet het aantal pixels van het object? ik dacht dat je dat opwhatsapp zei :S
-            foreach (KeyValuePair<int, DetectedObject > entry in detectedObjects)
-            {
-                int i = entry.Key;
-                MessageBox.Show(i.ToString());
-                
-            }
-
+            }         
            
         }
 
-        
+
+
+        private void GetCardType()
+        {
+            /*for (int i=0; i<detectedObjects.Count; i++)
+            {
+                
+                detectedObjects.TryGetValue(i, );
+                objectx = new DetectedObject();
+
+            }*/
+
+
+
+            foreach (KeyValuePair<int, DetectedObject> entry in detectedObjects)
+            {
+                int x = entry.Value.pixels[0,1];
+                int y = ;
+                Point a = new Point(x,y);
+                
+                // do something with entry.Value or entry.Key
+            }
+
+
+        }
+
+
 
         #endregion
 
@@ -516,4 +530,6 @@ namespace INFOIBV
             pixels.Add(new Point(x, y));
         }
     }
+
+    
 }
