@@ -402,7 +402,6 @@ namespace INFOIBV
 
                         DetectedObject detectedObject = detectedObjects.Find(o => o.id == label);
 
-                        // If a new label is detected, add an object to the detectedObjects.
                         if (detectedObject == null)
                         {
                             detectedObject = new DetectedObject(label);
@@ -415,7 +414,7 @@ namespace INFOIBV
                 }
             }
 
-            ColorDetectedObject(detectedObjects[1], Color.Red);
+            ColorDetectedObject(detectedObjects[3], Color.Red);
 
             MessageBox.Show(detectedObjects.Count.ToString());
         }
@@ -430,7 +429,9 @@ namespace INFOIBV
                         if (i >= 0 && j >= 0 && labelValues[i, j] != 0)
                             neighbours.Add(labelValues[i, j]);
             return neighbours;
-        }
+            
+            //Decide type of card (hearts, diamonds, clovers, pikes)
+        }        
 
         #endregion
 
