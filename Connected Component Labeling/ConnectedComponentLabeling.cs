@@ -96,9 +96,20 @@ partial class ImageProcessing
         MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");
     }
 
+    private List<string> GetCardTypes(List<DetectedObject> a)   //bepaal voor elk object het type,, moet voor elke kaart zijn dus er moet eigk nog een list gemaakt worden 
+    {                                                           // met voor elke kaart 1 object
+        List<string> objecttype = new List<string>();
+        for(int i = 0; i < a.Count(); i++)
+        {
+            objecttype.Add(CardType(a[i]));
+        }
+        return objecttype;
+    }
+
     public int ObjectOpp(DetectedObject a)
     {
-        return a.Area;
+        int opp = a.pixels.Count();                         //opp van object is alle pixels gezamenlijk, dus de count van de list
+        return opp;
     }
         
     public int ObjectOmtrek(DetectedObject a)               
@@ -133,6 +144,44 @@ partial class ImageProcessing
         else return omtrek;                                 //zo niet dan return omtrek onaangepast.
 
         
+    }
+
+    public int OppOmtrekVerhouding(DetectedObject a)
+    {
+        int opp = ObjectOpp(a);
+        int omt = ObjectOmtrek(a);
+        int verhouding = opp / omt;
+        return verhouding;
+    }
+
+    public string CardType(DetectedObject a)    //bepaal voor 1 object het type kaart
+    {
+        int v = OppOmtrekVerhouding(a);         //get de omtrekverhouding van a
+        int opp = ObjectOpp(a);                 //get de oppervlake van a
+        int omt = ObjectOmtrek(a);              //get de omtrek van a
+        int m1 = 0;     //marge 1
+        int m2 = 0;     //marge 2
+        int m3 = 0;     //marge 3
+        int m4 = 0;     //marge 4
+        string type = "";
+        if (v > 0 && v <= m1 )   //hier moeten de verhoudingen van harten, ruiten, schoppen en klaveren, dit zijn nu nog examples
+        {
+            type = "Harten";    
+        }
+        else if (v > m1 && v <= m2)
+        {
+            type = "Ruiten";
+        }
+        else if (v > m2 && v <= m3)
+        {
+            type = "Klaveren";
+        }
+        else if (v > m3 && v <= m4)
+        {
+            type = "Schoppen";
+        }
+
+            return type;
     }
 
 
