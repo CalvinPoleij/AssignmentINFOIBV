@@ -86,11 +86,54 @@ partial class ImageProcessing
                 }
             }
         }
-
+        
         // Color an object red.
         detectedObjects[4].ColorObject(Color.Red);
+
+       
 
         // Debug line that shows how many objects were detected.
         MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");
     }
+
+    public int ObjectOpp(DetectedObject a)
+    {
+        return a.Area;
+    }
+        
+    public int ObjectOmtrek(DetectedObject a)               
+    {
+        int omtrek  = 0;
+        for(int i = 0 ; i < a.pixels.Count; i++)            //doorloop elke pixel van het object
+        {                                                   //gebruikt automatisch de gereturnde omtrek?
+            CheckPixel(a.pixels[i], omtrek);
+        }
+        return omtrek;
+    }
+
+    public int CheckPixel(Point a, int omtrek)              // geef point van de pixel die gecheckt moet worden of deze een border is en de huidige omtrek
+    {                                                       //bij bitmap ook y + 1 als je naar beneden gaat?
+        
+        
+        Color lb = inputImage.GetPixel(a.X - 1, a.Y - 1);  //pixel linksboven van Point a
+        Color bm = inputImage.GetPixel(a.X , a.Y - 1);     //pixel bovenmidden van Point a
+        Color rb = inputImage.GetPixel(a.X + 1,a.Y - 1);   //pixel rechtsbovenin van Point a
+        Color lm = inputImage.GetPixel(a.X - 1, a.Y);      //pixel linksmidden van Point a
+        Color rm = inputImage.GetPixel(a.X + 1, a.Y);      //pixel rechtsmidden van Point a
+        Color lo = inputImage.GetPixel(a.X - 1, a.Y + 1);  //pixel linksonder van Point a
+        Color mo = inputImage.GetPixel(a.X, a.Y + 1);      //pixel middenonder van Point a
+        Color ro = inputImage.GetPixel(a.X +1,a.Y + 1);    //pixel rechtsonder van Point a
+
+        if (lb == Color.White || bm == Color.White || rb == Color.White || lm == Color.White || rm == Color.White || lo == Color.White || mo == Color.White || ro == Color.White) // check of een van de kleuren wit is
+        {
+            omtrek = omtrek + 1;                            //pas omtrek aan met +1 indien een van de pixels om de origin pixel wit is en return nieuwe omtrek
+            return omtrek;
+        }
+
+        else return omtrek;                                 //zo niet dan return omtrek onaangepast.
+
+        
+    }
+
+
 }
