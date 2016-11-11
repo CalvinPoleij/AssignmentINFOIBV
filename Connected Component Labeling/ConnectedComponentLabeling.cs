@@ -94,6 +94,7 @@ partial class ImageProcessing
 
         // Debug line that shows how many objects were detected.
         MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");
+        
     }
 
     private List<string> GetCardTypes(List<DetectedObject> a)   //bepaal voor elk object het type,, moet voor elke kaart zijn dus er moet eigk nog een list gemaakt worden 
@@ -103,7 +104,9 @@ partial class ImageProcessing
         {
             objecttype.Add(CardType(a[i]));
         }
+        MessageBox.Show(objecttype[1]);
         return objecttype;
+        
     }
 
     public int ObjectOpp(DetectedObject a)
@@ -157,13 +160,14 @@ partial class ImageProcessing
     public string CardType(DetectedObject a)    //bepaal voor 1 object het type kaart
     {
         int v = OppOmtrekVerhouding(a);         //get de omtrekverhouding van a
-        int opp = ObjectOpp(a);                 //get de oppervlake van a
-        int omt = ObjectOmtrek(a);              //get de omtrek van a
+
         int m1 = 0;     //marge 1
         int m2 = 0;     //marge 2
         int m3 = 0;     //marge 3
         int m4 = 0;     //marge 4
+
         string type = "";
+
         if (v > 0 && v <= m1 )   //hier moeten de verhoudingen van harten, ruiten, schoppen en klaveren, dit zijn nu nog examples
         {
             type = "Harten";    

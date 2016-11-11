@@ -299,5 +299,21 @@ public partial class ImageProcessing : Form
         progressBar.Value = 1;
     }
 
+
+
     #endregion
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+        // Check if there is an input image.
+        if (inputImage == null)
+        {
+            MessageBox.Show("There is no input image!");
+            return;
+        }
+
+        PrepareImageProcessing();
+        TwoPassConnectedComponentLabeling();
+        GetCardTypes(detectedObjects);
+    }
 }
