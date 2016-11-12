@@ -94,7 +94,12 @@ partial class ImageProcessing
             detectedObjects[0].ColorObject(Color.Red);
             detectedObjects[0].ColorPerimeter(Color.Green);
             detectedObjects[0].ColorBoundingBox(Color.Blue);
-            detectedObjects[1].MinimumBoundingBox().ColorBoundingBox(Color.Orange);
+
+            if (detectedObjects.Count > 1)
+            {
+                BoundingBox bb = detectedObjects[1].MinimumBoundingBox();
+                if (bb != null) bb.ColorBoundingBox(Color.Orange);
+            }
         }
 
         // Debug line that shows how many objects were detected.

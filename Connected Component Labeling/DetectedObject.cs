@@ -34,7 +34,14 @@ public class DetectedObject
 
     public double Rectangularity
     {
-        get { return Area / MinimumBoundingBox().Area; }
+        get
+        {
+            BoundingBox mbb = MinimumBoundingBox();
+            if (mbb != null)
+                return Area / mbb.Area;
+            else
+                return 0;
+        }
     }
 
     // Determine the compactness of the object, using the formula c = l(^2)/(4Pi * A)
@@ -134,6 +141,8 @@ public class DetectedObject
     public void ColorBoundingBox(Color color)
     {
         BoundingBox boundingBox = AxisAllignedBoundingBox();
+        if (boundingBox == null)
+            return;
 
         for (int i = boundingBox.Left; i <= boundingBox.Right; i++)
         {
