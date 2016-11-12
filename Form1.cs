@@ -327,7 +327,6 @@ public partial class ImageProcessing : Form
         }
 
         PrepareImageProcessing();
-        TwoPassConnectedComponentLabeling();
         Dilation();
 
     }
