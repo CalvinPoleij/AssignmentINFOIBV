@@ -3,6 +3,7 @@ using System.Drawing;
 using System;
 using System.Linq;
 
+
 public class DetectedObject
 {
     public int id;
@@ -10,6 +11,7 @@ public class DetectedObject
     public List<Point> perimeterPixels = new List<Point>();
     public Rectangle boundingBox;
 
+    
     // Properties
     public int Area
     {
@@ -53,6 +55,23 @@ public class DetectedObject
     {
         foreach (Point point in perimeterPixels)
             ImageProcessing.imageProcessing.image[point.X, point.Y] = color;
+    }
+
+    //bepaal de compactness van het object c=l(^2)/(4PiA)
+    public int Compactness
+    {
+        get { return (Perimeter * 2) / (Convert.ToInt32(Math.PI * 4) * Area); }
+
+    }
+
+    public int AreaBox//Vul bounding box in
+    { get; }
+
+    //bepaal de rectangularity van een object
+    public int Rectangularity
+    {
+        get { return Area / AreaBox; }
+
     }
 
     public void ColorBoundingBox(Color color)

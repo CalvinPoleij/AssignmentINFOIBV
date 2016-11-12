@@ -303,7 +303,7 @@ public partial class ImageProcessing : Form
 
     #endregion
 
-    private void button1_Click(object sender, EventArgs e)
+    private void Detect_Click(object sender, EventArgs e)
     {
         // Check if there is an input image.
         if (inputImage == null)
@@ -315,5 +315,19 @@ public partial class ImageProcessing : Form
         PrepareImageProcessing();
         TwoPassConnectedComponentLabeling();
         GetCardTypes(detectedObjects);
+    }
+
+    private void Dilation_Click(object sender, EventArgs e)
+    {
+        // Check if there is an input image.
+        if (inputImage == null)
+        {
+            MessageBox.Show("There is no input image!");
+            return;
+        }
+
+        PrepareImageProcessing();
+        Dilation();
+
     }
 }

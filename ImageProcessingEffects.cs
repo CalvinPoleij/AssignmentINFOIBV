@@ -103,4 +103,6 @@ partial class ImageProcessing
 
         return value;
     }
+
+    
 }
