@@ -91,9 +91,12 @@ partial class ImageProcessing
         if (detectedObjects.Count > 0)
         {
             detectedObjects[0].ColorObject(Color.Red);
-            detectedObjects[0].ColorPerimeter(Color.Green);
-            detectedObjects[0].ColorBoundingBox(Color.Blue);
-            detectedObjects[0].ConvexHull();
+            //detectedObjects[0].ColorPerimeter(Color.Green);
+            //detectedObjects[0].ColorBoundingBox(Color.Blue);
+            //detectedObjects[0].ConvexHull();
+
+            detectedObjects[0].Erosion(5);
+            detectedObjects[0].Dilation(5);
         }
 
         // Debug line that shows how many objects were detected.
@@ -103,16 +106,28 @@ partial class ImageProcessing
     // Check for a given point if it is a perimeter pixel (That is, if any of its neighbouring pixel is a background pixel).
     public bool CheckPerimeterPixel(int x, int y, bool checkDiagonals = false)
     {
+        foreach (Point p in GetPixelNeighbours(x, y, checkDiagonals))
+            if (image[p.X, p.Y] == backgroundColor)
+                return true;
+        return false;
+    }
+
+    // Return all neighbouring pixels of the given pixel.
+    public List<Point> GetPixelNeighbours(int x, int y, bool addDiagonals = false)
+    {
+        List<Point> neighbours = new List<Point>();
+
         for (int i = x - 1; i < x + 2 && i < inputImage.Width; i++)
             for (int j = y - 1; j < y + 2 && j < inputImage.Height; j++)
             {
-                if (!checkDiagonals && (j - y == i - x || j - y == -(i - x) || -(j - y) == i - x))
+                if (!addDiagonals && (j - y == i - x || j - y == -(i - x) || -(j - y) == i - x))
                     continue;
 
-                if (i >= 0 && j >= 0 && image[i, j] == backgroundColor)
-                    return true;
+                if (i >= 0 && j >= 0)
+                    neighbours.Add(new Point(i, j));
             }
-        return false;
+
+        return neighbours;
     }
 
     private List<string> GetCardTypes(List<DetectedObject> a)   //bepaal voor elk object het type,, moet voor elke kaart zijn dus er moet eigk nog een list gemaakt worden 
@@ -156,56 +171,5 @@ partial class ImageProcessing
         }
 
         return type;
-    }
-
-    public void Dilation()      //Dilation
-    {
-
-        foreach (DetectedObject c in detectedObjects)
-        {
-            foreach (Point p in c.perimeterPixels)//om p alles kleuren in + vorm, dus boven, onder, links, rechts, tenzij al onderdeel van het object
-            {
-                if (outputImage.GetPixel(p.X, p.Y + 1) == Color.White)  //pixel boven p
-                {
-                    outputImage.SetPixel(p.X, p.Y + 1, Color.Black);
-                    c.perimeterPixels.Add(new Point(p.X, p.Y + 1));    //voeg nieuwe perimeter pixel toe aan lijst
-                    c.pixels.Add(new Point(p.X, p.Y + 1));              //update ook de pixel list
-                }
-
-                if (outputImage.GetPixel(p.X, p.Y - 1) == Color.White)  //pixel onder p
-                {
-                    outputImage.SetPixel(p.X, p.Y - 1, Color.Black);
-                    c.perimeterPixels.Add(new Point(p.X, p.Y - 1));
-                    c.pixels.Add(new Point(p.X, p.Y - 1));
-                }
-
-                if (outputImage.GetPixel(p.X - 1, p.Y) == Color.White)   //pixel links p
-                {
-                    outputImage.SetPixel(p.X - 1, p.Y, Color.Black);
-                    c.perimeterPixels.Add(new Point(p.X - 1, p.Y));
-                    c.pixels.Add(new Point(p.X - 1, p.Y));
-                }
-
-                if (outputImage.GetPixel(p.X + 1, p.Y) == Color.White)  //pixel rechts p
-                {
-                    outputImage.SetPixel(p.X + 1, p.Y, Color.Black);
-                    c.perimeterPixels.Add(new Point(p.X + 1, p.Y));
-                    c.pixels.Add(new Point(p.X + 1, p.Y));
-                }
-                c.perimeterPixels.Remove(p);                            //p is niet langer perimeter pixel, remove
-
-            }
-        }
-    }
-
-    public void Erosion()       //Erosion
-    {
-        foreach (DetectedObject c in detectedObjects)
-        {
-            foreach (Point p in c.perimeterPixels)
-            {
-
-            }
-        }
     }
 }
