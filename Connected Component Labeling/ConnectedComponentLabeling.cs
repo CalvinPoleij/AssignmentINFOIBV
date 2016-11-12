@@ -81,20 +81,32 @@ partial class ImageProcessing
                         detectedObjects.Add(detectedObject);
                     }
 
-                    // Assign pixel to the found or newly created DetectedObject.
-                    detectedObject.AddPixel(x, y);
+                    // Assign pixel to the found or newly created DetectedObject. Also, check if the pixel is a perimeter pixel.
+                    detectedObject.AddPixel(x, y, CheckPerimeterPixel(x, y));
                 }
             }
         }
-        
-        // Color an object red.
-        detectedObjects[4].ColorObject(Color.Red);
 
-       
+
+        // Color an object red.
+        if (detectedObjects.Count > 0)
+        {
+            detectedObjects[0].ColorObject(Color.Red);
+            detectedObjects[0].ColorPerimeter(Color.Green);
+        }
 
         // Debug line that shows how many objects were detected.
-        MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");
-        
+        MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");  
+    }
+
+    // Check for a given point if it is a perimeter pixel (That is, if any of its neighbouring pixel is a background pixel).
+    public bool CheckPerimeterPixel(int x, int y)
+    {
+        for (int i = x - 1; i < x + 2 && i < inputImage.Width - 1; i++)
+            for (int j = y - 1; j < y + 2 && j < inputImage.Height - 1; j++)
+                if (image[i, j] == backgroundColor)
+                    return true;
+        return false;
     }
 
     private List<string> GetCardTypes(List<DetectedObject> a)   //bepaal voor elk object het type,, moet voor elke kaart zijn dus er moet eigk nog een list gemaakt worden 
@@ -105,72 +117,24 @@ partial class ImageProcessing
             objecttype.Add(CardType(a[i]));
         }
         MessageBox.Show(objecttype[1]);
-        return objecttype;
-        
+        return objecttype;        
     }
 
-    public int ObjectOpp(DetectedObject a)
+    // Determine the Card Type for an object.
+    public string CardType(DetectedObject a)
     {
-        int opp = a.pixels.Count();                         //opp van object is alle pixels gezamenlijk, dus de count van de list
-        return opp;
-    }
-        
-    public int ObjectOmtrek(DetectedObject a)               
-    {
-        int omtrek  = 0;
-        for(int i = 0 ; i < a.pixels.Count; i++)            //doorloop elke pixel van het object
-        {                                                   //gebruikt automatisch de gereturnde omtrek?
-            CheckPixel(a.pixels[i], omtrek);
-        }
-        return omtrek;
-    }
+        float v = a.AreaPerimeterRatio;         // Get the Area Perimeter Ratio of the DetectedObject.
 
-    public int CheckPixel(Point a, int omtrek)              // geef point van de pixel die gecheckt moet worden of deze een border is en de huidige omtrek
-    {                                                       //bij bitmap ook y + 1 als je naar beneden gaat?
-        
-        
-        Color lb = inputImage.GetPixel(a.X - 1, a.Y - 1);  //pixel linksboven van Point a
-        Color bm = inputImage.GetPixel(a.X , a.Y - 1);     //pixel bovenmidden van Point a
-        Color rb = inputImage.GetPixel(a.X + 1,a.Y - 1);   //pixel rechtsbovenin van Point a
-        Color lm = inputImage.GetPixel(a.X - 1, a.Y);      //pixel linksmidden van Point a
-        Color rm = inputImage.GetPixel(a.X + 1, a.Y);      //pixel rechtsmidden van Point a
-        Color lo = inputImage.GetPixel(a.X - 1, a.Y + 1);  //pixel linksonder van Point a
-        Color mo = inputImage.GetPixel(a.X, a.Y + 1);      //pixel middenonder van Point a
-        Color ro = inputImage.GetPixel(a.X +1,a.Y + 1);    //pixel rechtsonder van Point a
-
-        if (lb == Color.White || bm == Color.White || rb == Color.White || lm == Color.White || rm == Color.White || lo == Color.White || mo == Color.White || ro == Color.White) // check of een van de kleuren wit is
-        {
-            omtrek = omtrek + 1;                            //pas omtrek aan met +1 indien een van de pixels om de origin pixel wit is en return nieuwe omtrek
-            return omtrek;
-        }
-
-        else return omtrek;                                 //zo niet dan return omtrek onaangepast.
-
-        
-    }
-
-    public int OppOmtrekVerhouding(DetectedObject a)
-    {
-        int opp = ObjectOpp(a);
-        int omt = ObjectOmtrek(a);
-        int verhouding = opp / omt;
-        return verhouding;
-    }
-
-    public string CardType(DetectedObject a)    //bepaal voor 1 object het type kaart
-    {
-        int v = OppOmtrekVerhouding(a);         //get de omtrekverhouding van a
-
-        int m1 = 0;     //marge 1
-        int m2 = 0;     //marge 2
-        int m3 = 0;     //marge 3
-        int m4 = 0;     //marge 4
+        int m1 = 0;     // Margin 1
+        int m2 = 0;     // Margin 2
+        int m3 = 0;     // Margin 3
+        int m4 = 0;     // Margin 4
 
         string type = "";
 
-        if (v > 0 && v <= m1 )   //hier moeten de verhoudingen van harten, ruiten, schoppen en klaveren, dit zijn nu nog examples
+        if (v > 0 && v <= m1)   //hier moeten de verhoudingen van harten, ruiten, schoppen en klaveren, dit zijn nu nog examples
         {
-            type = "Harten";    
+            type = "Harten";
         }
         else if (v > m1 && v <= m2)
         {
@@ -185,8 +149,6 @@ partial class ImageProcessing
             type = "Schoppen";
         }
 
-            return type;
+        return type;
     }
-
-
 }
