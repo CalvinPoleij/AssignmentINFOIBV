@@ -48,7 +48,8 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Connected Component Labeling\Class1.cs" />
+    <Compile Include="BoundingBox.cs" />
+    <Compile Include="Connected Component Labeling\DetectedCard.cs" />
     <Compile Include="Connected Component Labeling\ConnectedComponentLabeling.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -64,6 +65,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="Vector2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
