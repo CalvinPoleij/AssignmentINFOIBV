@@ -209,14 +209,11 @@ public class DetectedObject
     // Rotating Calipers algorithm. Uses the Convex Hull to calculate the Minimum Bounding Box.
     public BoundingBox RotatingCalipers(List<Point> convexHull)
     {
+        if (convexHull == null || convexHull.Count == 0)
+            return null;
+
         BoundingBox minimumBoundingBox = AxisAllignedBoundingBox();
         double smallestBoundingBoxArea = minimumBoundingBox.Area;
-
-        // Directional Points.
-        Vector2 topSideDirection = new Vector2(-1, 0);          // Direction: left
-        Vector2 bottomSideDirection = new Vector2(1, 0);        // Direction: right
-        Vector2 rightSideDirection = new Vector2(0, 1);         // Direction: up
-        Vector2 leftSideDirection = new Vector2(0, -1);         // Direction: down
 
         List<Vector2> edgeDirections = new List<Vector2>();
 
@@ -241,6 +238,12 @@ public class DetectedObject
         Vector2 maxX = new Vector2(convexHull[maxXIndex].X, convexHull[maxXIndex].Y);
         Vector2 minY = new Vector2(convexHull[minYIndex].X, convexHull[minYIndex].Y);
         Vector2 maxY = new Vector2(convexHull[maxYIndex].X, convexHull[maxYIndex].Y);
+
+        // Directional Vectors at the start of the Rotating Clippers algorithm.
+        Vector2 topSideDirection = new Vector2(-1, 0);          // Direction: left
+        Vector2 bottomSideDirection = new Vector2(1, 0);        // Direction: right
+        Vector2 rightSideDirection = new Vector2(0, 1);         // Direction: up
+        Vector2 leftSideDirection = new Vector2(0, -1);         // Direction: down
 
         for (int i = 0; i < convexHull.Count; i++)
         {
@@ -288,7 +291,7 @@ public class DetectedObject
                     break;
             }
 
-            // Update bounding box
+            // Determine new bounding box, formed by the intersections of the directional vectors.
             Point topLeft = IntersectionPoint(minX, leftSideDirection, maxY, topSideDirection);
             Point topRight = IntersectionPoint(maxX, rightSideDirection, maxY, topSideDirection);
             Point bottomLeft = IntersectionPoint(minY, bottomSideDirection, minX, leftSideDirection);
