@@ -10,7 +10,7 @@ public class DetectedObject
     public List<Point> perimeterPixels = new List<Point>();
     
     // Properties
-    public int Area
+    public int Area //GAAT IETS FOUT bij hoogste threshold?
     {
         get { return pixels.Count; }
     }
@@ -143,13 +143,13 @@ public class DetectedObject
     }
 
     // Area of the Bounding Box
-    public int BoundingBoxArea(Rectangle box)
+    public double BoundingBoxArea(Rectangle box)
     {
         return box.Width * box.Height;
     }
 
     //bepaal de rectangularity van een object
-    public int Rectangularity
+    public double Rectangularity
     {
         get { return Area / BoundingBoxArea(AxisAllignedBoundingBox()); }
     }
