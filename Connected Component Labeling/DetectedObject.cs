@@ -22,7 +22,13 @@ public class DetectedObject
 
     public float AreaPerimeterRatio
     {
-        get { return Area / Perimeter; }
+        get
+        {
+            if (Perimeter == 0)
+                return 0;
+            else
+                return Area / Perimeter;
+        }
     }
 
     // Constructor for initialization.
@@ -204,10 +210,5 @@ public class DetectedObject
         while (convexHullPoints[convexHullPoints.Count - 1] != endPoint);
 
         return convexHullPoints;
-    }
-
-    private double Distance(Point A, Point B)
-    {
-        return Math.Sqrt(Math.Pow(A.X - B.X, 2) + Math.Pow(A.Y - B.Y, 2));
     }
 }

@@ -91,12 +91,9 @@ partial class ImageProcessing
         if (detectedObjects.Count > 0)
         {
             detectedObjects[0].ColorObject(Color.Red);
-            //detectedObjects[0].ColorPerimeter(Color.Green);
-            //detectedObjects[0].ColorBoundingBox(Color.Blue);
-            //detectedObjects[0].ConvexHull();
-
-            detectedObjects[0].Erosion(5);
-            detectedObjects[0].Dilation(5);
+            detectedObjects[0].ColorPerimeter(Color.Green);
+            detectedObjects[0].ColorBoundingBox(Color.Blue);
+            detectedObjects[0].ConvexHull();
         }
 
         // Debug line that shows how many objects were detected.
@@ -174,58 +171,4 @@ partial class ImageProcessing
 
         return type;
     }
-<<<<<<< HEAD
-
-    public void Dilation()      //Dilation
-    {
-
-        foreach (DetectedObject c in detectedObjects)
-        {
-            foreach (Point p in c.perimeterPixels)//om p alles kleuren in + vorm, dus boven, onder, links, rechts, tenzij al onderdeel van het object
-            {
-                if (outputImage.GetPixel(p.X, p.Y + 1).ToArgb() == Color.White.ToArgb())  //pixel boven p
-                {
-                    outputImage.SetPixel(p.X, p.Y + 1, Color.Black);
-                    c.perimeterPixels.Add(new Point(p.X, p.Y + 1));    //voeg nieuwe perimeter pixel toe aan lijst
-                    c.pixels.Add(new Point(p.X, p.Y + 1));              //update ook de pixel list
-                }
-
-                if (outputImage.GetPixel(p.X, p.Y - 1) == Color.White)  //pixel onder p
-                {
-                    outputImage.SetPixel(p.X, p.Y - 1, Color.Black);
-                    c.perimeterPixels.Add(new Point(p.X, p.Y - 1));
-                    c.pixels.Add(new Point(p.X, p.Y - 1));
-                }
-
-                if (outputImage.GetPixel(p.X - 1, p.Y) == Color.White)   //pixel links p
-                {
-                    outputImage.SetPixel(p.X - 1, p.Y, Color.Black);
-                    c.perimeterPixels.Add(new Point(p.X - 1, p.Y));
-                    c.pixels.Add(new Point(p.X - 1, p.Y));
-                }
-
-                if (outputImage.GetPixel(p.X + 1, p.Y) == Color.White)  //pixel rechts p
-                {
-                    outputImage.SetPixel(p.X + 1, p.Y, Color.Black);
-                    c.perimeterPixels.Add(new Point(p.X + 1, p.Y));
-                    c.pixels.Add(new Point(p.X + 1, p.Y));
-                }
-                c.perimeterPixels.Remove(p);                            //p is niet langer perimeter pixel, remove
-
-            }
-        }
-    }
-
-    public void Erosion()       //Erosion
-    {
-        foreach (DetectedObject c in detectedObjects)
-        {
-            foreach (Point p in c.perimeterPixels)
-            {
-
-            }
-        }
-    }
-=======
->>>>>>> origin/master
 }
