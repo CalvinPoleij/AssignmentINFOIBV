@@ -87,7 +87,6 @@ partial class ImageProcessing
             }
         }
 
-
         // Color an object red.
         if (detectedObjects.Count > 0)
         {
@@ -102,13 +101,13 @@ partial class ImageProcessing
     // Check for a given point if it is a perimeter pixel (That is, if any of its neighbouring pixel is a background pixel).
     public bool CheckPerimeterPixel(int x, int y, bool checkDiagonals = false)
     {
-        for (int i = x - 1; i < x + 2 && i < inputImage.Width - 1; i++)
-            for (int j = y - 1; j < y + 2 && j < inputImage.Height - 1; j++)
+        for (int i = x - 1; i < x + 2 && i < inputImage.Width; i++)
+            for (int j = y - 1; j < y + 2 && j < inputImage.Height; j++)
             {
                 if (!checkDiagonals && (j - y == i - x || j - y == -(i - x) || -(j - y) == i - x))
                     continue;
 
-                if (image[i, j] == backgroundColor)
+                if (i >= 0 && j >= 0 && image[i, j] == backgroundColor)
                     return true;
             }
         return false;
