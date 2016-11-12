@@ -93,6 +93,7 @@ partial class ImageProcessing
             detectedObjects[0].ColorObject(Color.Red);
             detectedObjects[0].ColorPerimeter(Color.Green);
             detectedObjects[0].ColorBoundingBox(Color.Blue);
+            detectedObjects[0].ConvexHull();
         }
 
         // Debug line that shows how many objects were detected.

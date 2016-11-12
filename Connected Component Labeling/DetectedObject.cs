@@ -8,7 +8,6 @@ public class DetectedObject
     public int id;
     public List<Point> pixels = new List<Point>();
     public List<Point> perimeterPixels = new List<Point>();
-    public Rectangle boundingBox;
 
     // Properties
     public int Area
@@ -55,9 +54,10 @@ public class DetectedObject
             ImageProcessing.imageProcessing.image[point.X, point.Y] = color;
     }
 
+    // Give each pixel belonginf to the bounding box of this object a color.
     public void ColorBoundingBox(Color color)
     {
-        boundingBox = BoundingBox();
+        Rectangle boundingBox = AxisAllignedBoundingBox();
 
         for (int i = boundingBox.Left; i <= boundingBox.Right; i++)
         {
@@ -72,17 +72,63 @@ public class DetectedObject
         }
     }
 
-    public Rectangle BoundingBox()
+    // Determine the axis alligned bounding box of this object.
+    public Rectangle AxisAllignedBoundingBox()
     {
-        // If the boundingBox of this object has not already been determined, calculate it.
-        int minX = pixels.Min(p => p.X);
-        int maxX = pixels.Max(p => p.X);
-        int minY = pixels.Min(p => p.Y);
-        int maxY = pixels.Max(p => p.Y);
-
-        boundingBox = new Rectangle(minX, minY, maxX - minX, maxY - minY);
+        int minX = perimeterPixels.Min(p => p.X);
+        int maxX = perimeterPixels.Max(p => p.X);
+        int minY = perimeterPixels.Min(p => p.Y);
+        int maxY = perimeterPixels.Max(p => p.Y);
 
         // Return the bounding box.
-        return boundingBox;
+        return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+    }
+
+    public Rectangle MinimumBoundingBox()
+    {
+        return AxisAllignedBoundingBox();
+    }
+
+    // Calculate the Convex Hull using Jarvis March algorithm.
+    public List<Point> ConvexHull()
+    {
+        if (perimeterPixels.Count < 3)
+        {
+            Console.WriteLine("Jarvis March requires 3 points to calculate the Convex Hull");
+            return null;
+        }
+
+        List<Point> convexHullPoints = new List<Point>();
+        Point hullPoint = perimeterPixels.Find(p => p.X == perimeterPixels.Min(p2 => p2.X));
+        Point endPoint;
+
+        do
+        {
+            convexHullPoints.Insert(0, hullPoint);
+            ImageProcessing.imageProcessing.image[hullPoint.X, hullPoint.Y] = Color.Yellow;
+            endPoint = perimeterPixels[0];
+
+            for (int i = 1; i < perimeterPixels.Count; i++)
+            {
+                Point p = perimeterPixels[i];
+
+                // Check if the current perimeter pixel is on the left side of the line from hullPoint to endPoint.
+                float distanceToLine = (endPoint.X - hullPoint.X) * (p.Y - hullPoint.Y) -
+                                       (endPoint.Y - hullPoint.Y) * (p.X - hullPoint.X);
+
+                if (endPoint == hullPoint || distanceToLine > 0)
+                    endPoint = p;
+            }
+
+            hullPoint = endPoint;
+        }
+        while (convexHullPoints[convexHullPoints.Count - 1] != endPoint);
+
+        return convexHullPoints;
+    }
+
+    private double Distance(Point A, Point B)
+    {
+        return Math.Sqrt(Math.Pow(A.X - B.X, 2) + Math.Pow(A.Y - B.Y, 2));
     }
 }
