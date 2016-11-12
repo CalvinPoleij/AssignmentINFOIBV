@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System;
+<<<<<<< HEAD
+=======
+using System.Linq;
+>>>>>>> refs/remotes/origin/master
 
 public class DetectedObject
 {
     public int id;
     public List<Point> pixels = new List<Point>();
     public List<Point> perimeterPixels = new List<Point>();
+    public Rectangle boundingBox;
 
     
     // Properties
@@ -54,6 +59,7 @@ public class DetectedObject
             ImageProcessing.imageProcessing.image[point.X, point.Y] = color;
     }
 
+<<<<<<< HEAD
     //bepaal de compactness van het object c=l(^2)/(4PiA)
     public int Compactness
     {
@@ -68,5 +74,36 @@ public class DetectedObject
     public int Rectangularity
     {
         get { return Area / AreaBox; }
+=======
+    public void ColorBoundingBox(Color color)
+    {
+        boundingBox = BoundingBox();
+
+        for (int i = boundingBox.Left; i <= boundingBox.Right; i++)
+        {
+            ImageProcessing.imageProcessing.image[i, boundingBox.Top] = color;
+            ImageProcessing.imageProcessing.image[i, boundingBox.Bottom] = color;
+        }
+
+        for (int j = boundingBox.Top; j <= boundingBox.Bottom; j++)
+        {
+            ImageProcessing.imageProcessing.image[boundingBox.Left, j] = color;
+            ImageProcessing.imageProcessing.image[boundingBox.Right, j] = color;
+        }
+    }
+
+    public Rectangle BoundingBox()
+    {
+        // If the boundingBox of this object has not already been determined, calculate it.
+        int minX = pixels.Min(p => p.X);
+        int maxX = pixels.Max(p => p.X);
+        int minY = pixels.Min(p => p.Y);
+        int maxY = pixels.Max(p => p.Y);
+
+        boundingBox = new Rectangle(minX, minY, maxX - minX, maxY - minY);
+
+        // Return the bounding box.
+        return boundingBox;
+>>>>>>> refs/remotes/origin/master
     }
 }
