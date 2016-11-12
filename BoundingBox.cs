@@ -56,6 +56,7 @@ public class BoundingBox
 
     public void ColorBoundingBox(Color color)
     {
+        // Todo: check if in range.
         ImageProcessing.imageProcessing.image[topLeft.X, topLeft.Y] = color;
         ImageProcessing.imageProcessing.image[topRight.X, topRight.Y] = color;
         ImageProcessing.imageProcessing.image[bottomLeft.X, bottomLeft.Y] = color;
