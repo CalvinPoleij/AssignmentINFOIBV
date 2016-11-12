@@ -75,9 +75,9 @@ public class DetectedObject
     }
 
     //bepaal de compactness van het object c=l(^2)/(4PiA)
-    public int Compactness
+    public double Compactness
     {
-        get { return (Perimeter * 2) / (Convert.ToInt32(Math.PI * 4) * Area); }
+        get { return (Perimeter * 2) / ((Math.PI * 4) * Area); }
 
     }
 

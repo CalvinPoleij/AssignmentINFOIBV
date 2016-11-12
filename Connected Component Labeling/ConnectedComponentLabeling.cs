@@ -98,6 +98,8 @@ partial class ImageProcessing
 
         // Debug line that shows how many objects were detected.
         MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");
+        DetectedObject a = detectedObjects[0];
+        MessageBox.Show("compactness: " + a.Compactness.ToString() + " omtrek/opp verhouding: " + a.AreaPerimeterRatio.ToString() + " omtrek: " + a.Perimeter.ToString() + " opp: " + a.Area.ToString());
     }
 
     // Check for a given point if it is a perimeter pixel (That is, if any of its neighbouring pixel is a background pixel).
@@ -165,7 +167,7 @@ partial class ImageProcessing
         {
             foreach (Point p in c.perimeterPixels)//om p alles kleuren in + vorm, dus boven, onder, links, rechts, tenzij al onderdeel van het object
             {
-                if (outputImage.GetPixel(p.X, p.Y + 1) == Color.White)  //pixel boven p
+                if (outputImage.GetPixel(p.X, p.Y + 1).ToArgb() == Color.White.ToArgb())  //pixel boven p
                 {
                     outputImage.SetPixel(p.X, p.Y + 1, Color.Black);
                     c.perimeterPixels.Add(new Point(p.X, p.Y + 1));    //voeg nieuwe perimeter pixel toe aan lijst
