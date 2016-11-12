@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 
 // Partial class that handles all Image Processing Effects such as applying grayscale or making an image binary.
 partial class ImageProcessing
 {
     // Determine background- and foreground colors of a binary image.
-    Color backgroundColor = Color.Black;
-    Color foregroundColor = Color.White;
+    public Color backgroundColor = Color.Black;
+    public Color foregroundColor = Color.White;
 
     // Creates a negative image. (included as an example in the template)
     private void ApplyNegative()
@@ -91,6 +92,28 @@ partial class ImageProcessing
                 image[x, y] = Color.FromArgb((byte)red, (byte)green, (byte)blue);                               // Set the new pixel color at coordinate (x,y).
             }
         }
+    }
+
+    // Dilation effect on all deteced objects.
+    public void Dilation(int dilationLevel = 1)
+    {
+        if (detectedObjects.Count == 0)
+            MessageBox.Show("Detect objects before attempting dilation!");
+
+        foreach (DetectedObject c in detectedObjects)
+        {
+            c.Dilation(dilationLevel);
+        }
+    }
+
+    // Erosion effect on all deteced objects.
+    public void Erosion(int erosionLevel = 1)
+    {
+        if (detectedObjects.Count == 0)
+            MessageBox.Show("Detect objects before attempting erosion!");
+
+        foreach (DetectedObject c in detectedObjects)
+            c.Erosion(erosionLevel);
     }
 
     // Clamps a value between a minimum and maximum value.

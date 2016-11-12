@@ -33,6 +33,63 @@ public class DetectedObject
         this.id = id;
     }
 
+    // Erodes an object.
+    public void Erosion(int erosionLevel = 1)
+    {
+        for (int i = 0; i < erosionLevel; i++)
+        {
+            foreach (Point pixel in perimeterPixels)
+            {
+                pixels.Remove(pixel);
+                ImageProcessing.imageProcessing.image[pixel.X, pixel.Y] = ImageProcessing.imageProcessing.backgroundColor;
+            }
+
+            perimeterPixels.Clear();
+
+            foreach (Point pixel in pixels)
+            {
+                if (ImageProcessing.imageProcessing.CheckPerimeterPixel(pixel.X, pixel.Y))
+                    perimeterPixels.Add(pixel);
+            }
+        }
+
+        if (pixels.Count == 0)
+            ImageProcessing.imageProcessing.detectedObjects.Remove(this);
+    }
+
+    public void Dilation(int dilationLevel = 1)
+    {
+        List<Point> toBeRemoved = new List<Point>();
+        List<Point> toBeAdded = new List<Point>();
+
+        // Repeat the dilation process for each dilationLevel.
+        for (int i = 0; i < dilationLevel; i++)
+        {
+            // Per perimeter pixel, make all neighbouring background pixels a foreground pixel (diagonals excluded).
+            foreach (Point p in perimeterPixels)
+            {
+                foreach (Point n in ImageProcessing.imageProcessing.GetPixelNeighbours(p.X, p.Y))
+                    if (ImageProcessing.imageProcessing.image[n.X, n.Y] == ImageProcessing.imageProcessing.backgroundColor)
+                        toBeAdded.Add(n);
+                toBeRemoved.Add(p);
+            }
+
+            foreach (Point p in toBeRemoved)
+                perimeterPixels.Remove(p);
+
+            foreach (Point p in toBeAdded)
+            {
+                ImageProcessing.imageProcessing.image[p.X, p.Y] = ImageProcessing.imageProcessing.foregroundColor;
+                perimeterPixels.Add(p);
+                pixels.Add(p);
+            }
+
+            // Reset list variables.
+            toBeRemoved.Clear();
+            toBeAdded.Clear();
+        }
+    }
+
     // Adds a pixel to this DetectedObject list of pixels.
     public void AddPixel(int x, int y, bool perimeter = false)
     {
@@ -81,19 +138,24 @@ public class DetectedObject
 
     }
 
-    public int AreaBox//Vul bounding box in
-    { get; }
+    // Area of the Bounding Box
+    public int BoundingBoxArea(Rectangle box)
+    {
+        return box.Width * box.Height;
+    }
 
     //bepaal de rectangularity van een object
     public int Rectangularity
     {
-        get { return Area / AreaBox; }
-
+        get { return Area / BoundingBoxArea(AxisAllignedBoundingBox()); }
     }
 
     // Determine the axis alligned bounding box of this object.
     public Rectangle AxisAllignedBoundingBox()
     {
+        if (perimeterPixels.Count == 0)
+            return new Rectangle();
+
         int minX = perimeterPixels.Min(p => p.X);
         int maxX = perimeterPixels.Max(p => p.X);
         int minY = perimeterPixels.Min(p => p.Y);

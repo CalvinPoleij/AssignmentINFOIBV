@@ -91,9 +91,12 @@ partial class ImageProcessing
         if (detectedObjects.Count > 0)
         {
             detectedObjects[0].ColorObject(Color.Red);
-            detectedObjects[0].ColorPerimeter(Color.Green);
-            detectedObjects[0].ColorBoundingBox(Color.Blue);
-            detectedObjects[0].ConvexHull();
+            //detectedObjects[0].ColorPerimeter(Color.Green);
+            //detectedObjects[0].ColorBoundingBox(Color.Blue);
+            //detectedObjects[0].ConvexHull();
+
+            detectedObjects[0].Erosion(5);
+            detectedObjects[0].Dilation(5);
         }
 
         // Debug line that shows how many objects were detected.
@@ -105,16 +108,28 @@ partial class ImageProcessing
     // Check for a given point if it is a perimeter pixel (That is, if any of its neighbouring pixel is a background pixel).
     public bool CheckPerimeterPixel(int x, int y, bool checkDiagonals = false)
     {
+        foreach (Point p in GetPixelNeighbours(x, y, checkDiagonals))
+            if (image[p.X, p.Y] == backgroundColor)
+                return true;
+        return false;
+    }
+
+    // Return all neighbouring pixels of the given pixel.
+    public List<Point> GetPixelNeighbours(int x, int y, bool addDiagonals = false)
+    {
+        List<Point> neighbours = new List<Point>();
+
         for (int i = x - 1; i < x + 2 && i < inputImage.Width; i++)
             for (int j = y - 1; j < y + 2 && j < inputImage.Height; j++)
             {
-                if (!checkDiagonals && (j - y == i - x || j - y == -(i - x) || -(j - y) == i - x))
+                if (!addDiagonals && (j - y == i - x || j - y == -(i - x) || -(j - y) == i - x))
                     continue;
 
-                if (i >= 0 && j >= 0 && image[i, j] == backgroundColor)
-                    return true;
+                if (i >= 0 && j >= 0)
+                    neighbours.Add(new Point(i, j));
             }
-        return false;
+
+        return neighbours;
     }
 
     private List<string> GetCardTypes(List<DetectedObject> a)   //bepaal voor elk object het type,, moet voor elke kaart zijn dus er moet eigk nog een list gemaakt worden 
@@ -159,6 +174,7 @@ partial class ImageProcessing
 
         return type;
     }
+<<<<<<< HEAD
 
     public void Dilation()      //Dilation
     {
@@ -210,4 +226,6 @@ partial class ImageProcessing
             }
         }
     }
+=======
+>>>>>>> origin/master
 }

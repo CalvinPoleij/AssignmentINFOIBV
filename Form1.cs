@@ -327,7 +327,7 @@ public partial class ImageProcessing : Form
         }
 
         PrepareImageProcessing();
-        Dilation();
-
+        Dilation(5);
+        ShowOutputImage();
     }
 }
