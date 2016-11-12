@@ -3,13 +3,11 @@ using System.Drawing;
 using System;
 using System.Linq;
 
-
 public class DetectedObject
 {
     public int id;
     public List<Point> pixels = new List<Point>();
     public List<Point> perimeterPixels = new List<Point>();
-
     
     // Properties
     public int Area

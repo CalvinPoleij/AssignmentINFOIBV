@@ -125,7 +125,5 @@ partial class ImageProcessing
             value = max;
 
         return value;
-    }
-
-    
+    }    
 }
