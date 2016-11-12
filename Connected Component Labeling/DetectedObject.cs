@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System;
-<<<<<<< HEAD
-=======
 using System.Linq;
->>>>>>> refs/remotes/origin/master
+
 
 public class DetectedObject
 {
@@ -59,7 +57,6 @@ public class DetectedObject
             ImageProcessing.imageProcessing.image[point.X, point.Y] = color;
     }
 
-<<<<<<< HEAD
     //bepaal de compactness van het object c=l(^2)/(4PiA)
     public int Compactness
     {
@@ -74,7 +71,9 @@ public class DetectedObject
     public int Rectangularity
     {
         get { return Area / AreaBox; }
-=======
+
+    }
+
     public void ColorBoundingBox(Color color)
     {
         boundingBox = BoundingBox();
@@ -104,6 +103,5 @@ public class DetectedObject
 
         // Return the bounding box.
         return boundingBox;
->>>>>>> refs/remotes/origin/master
     }
 }
