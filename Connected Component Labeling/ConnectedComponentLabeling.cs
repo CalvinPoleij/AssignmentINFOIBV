@@ -174,7 +174,7 @@ partial class ImageProcessing
 
         return type;
     }
-<<<<<<< HEAD
+
 
     public void Dilation()      //Dilation
     {
@@ -226,6 +226,5 @@ partial class ImageProcessing
             }
         }
     }
-=======
->>>>>>> origin/master
+
 }
