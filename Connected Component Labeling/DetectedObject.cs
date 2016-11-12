@@ -3,12 +3,14 @@ using System.Drawing;
 using System;
 using System.Linq;
 
+
 public class DetectedObject
 {
     public int id;
     public List<Point> pixels = new List<Point>();
     public List<Point> perimeterPixels = new List<Point>();
 
+    
     // Properties
     public int Area
     {
@@ -54,7 +56,7 @@ public class DetectedObject
             ImageProcessing.imageProcessing.image[point.X, point.Y] = color;
     }
 
-    // Give each pixel belonginf to the bounding box of this object a color.
+    // Give each pixel belonging to the bounding box of this object a color.
     public void ColorBoundingBox(Color color)
     {
         Rectangle boundingBox = AxisAllignedBoundingBox();
@@ -70,6 +72,23 @@ public class DetectedObject
             ImageProcessing.imageProcessing.image[boundingBox.Left, j] = color;
             ImageProcessing.imageProcessing.image[boundingBox.Right, j] = color;
         }
+    }
+
+    //bepaal de compactness van het object c=l(^2)/(4PiA)
+    public int Compactness
+    {
+        get { return (Perimeter * 2) / (Convert.ToInt32(Math.PI * 4) * Area); }
+
+    }
+
+    public int AreaBox//Vul bounding box in
+    { get; }
+
+    //bepaal de rectangularity van een object
+    public int Rectangularity
+    {
+        get { return Area / AreaBox; }
+
     }
 
     // Determine the axis alligned bounding box of this object.

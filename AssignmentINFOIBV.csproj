@@ -48,6 +48,7 @@
     <Content Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connected Component Labeling\Class1.cs" />
     <Compile Include="Connected Component Labeling\ConnectedComponentLabeling.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 partial class ImageProcessing
 {
-    List<DetectedObject> detectedObjects = new List<DetectedObject>();
+    public List<DetectedObject> detectedObjects = new List<DetectedObject>();
 
     // Based on the Two-pass Connected-component labeling algorithm.
     // Labels all the objects in a binary image (which means the image consists only of two colours).
@@ -97,7 +97,7 @@ partial class ImageProcessing
         }
 
         // Debug line that shows how many objects were detected.
-        MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");  
+        MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");
     }
 
     // Check for a given point if it is a perimeter pixel (That is, if any of its neighbouring pixel is a background pixel).
@@ -118,12 +118,12 @@ partial class ImageProcessing
     private List<string> GetCardTypes(List<DetectedObject> a)   //bepaal voor elk object het type,, moet voor elke kaart zijn dus er moet eigk nog een list gemaakt worden 
     {                                                           // met voor elke kaart 1 object
         List<string> objecttype = new List<string>();
-        for(int i = 0; i < a.Count(); i++)
+        for (int i = 0; i < a.Count(); i++)
         {
             objecttype.Add(CardType(a[i]));
         }
         MessageBox.Show(objecttype[1]);
-        return objecttype;        
+        return objecttype;
     }
 
     // Determine the Card Type for an object.
@@ -156,5 +156,56 @@ partial class ImageProcessing
         }
 
         return type;
+    }
+
+    public void Dilation()      //Dilation
+    {
+
+        foreach (DetectedObject c in detectedObjects)
+        {
+            foreach (Point p in c.perimeterPixels)//om p alles kleuren in + vorm, dus boven, onder, links, rechts, tenzij al onderdeel van het object
+            {
+                if (outputImage.GetPixel(p.X, p.Y + 1) == Color.White)  //pixel boven p
+                {
+                    outputImage.SetPixel(p.X, p.Y + 1, Color.Black);
+                    c.perimeterPixels.Add(new Point(p.X, p.Y + 1));    //voeg nieuwe perimeter pixel toe aan lijst
+                    c.pixels.Add(new Point(p.X, p.Y + 1));              //update ook de pixel list
+                }
+
+                if (outputImage.GetPixel(p.X, p.Y - 1) == Color.White)  //pixel onder p
+                {
+                    outputImage.SetPixel(p.X, p.Y - 1, Color.Black);
+                    c.perimeterPixels.Add(new Point(p.X, p.Y - 1));
+                    c.pixels.Add(new Point(p.X, p.Y - 1));
+                }
+
+                if (outputImage.GetPixel(p.X - 1, p.Y) == Color.White)   //pixel links p
+                {
+                    outputImage.SetPixel(p.X - 1, p.Y, Color.Black);
+                    c.perimeterPixels.Add(new Point(p.X - 1, p.Y));
+                    c.pixels.Add(new Point(p.X - 1, p.Y));
+                }
+
+                if (outputImage.GetPixel(p.X + 1, p.Y) == Color.White)  //pixel rechts p
+                {
+                    outputImage.SetPixel(p.X + 1, p.Y, Color.Black);
+                    c.perimeterPixels.Add(new Point(p.X + 1, p.Y));
+                    c.pixels.Add(new Point(p.X + 1, p.Y));
+                }
+                c.perimeterPixels.Remove(p);                            //p is niet langer perimeter pixel, remove
+
+            }
+        }
+    }
+
+    public void Erosion()       //Erosion
+    {
+        foreach (DetectedObject c in detectedObjects)
+        {
+            foreach (Point p in c.perimeterPixels)
+            {
+
+            }
+        }
     }
 }
