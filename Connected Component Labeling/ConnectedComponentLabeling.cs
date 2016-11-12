@@ -6,6 +6,7 @@ using System.Windows.Forms;
 partial class ImageProcessing
 {
     public List<DetectedObject> detectedObjects = new List<DetectedObject>();
+    public List<DetectedCard> detectedCards = new List<DetectedCard>();
 
     // Based on the Two-pass Connected-component labeling algorithm.
     // Labels all the objects in a binary image (which means the image consists only of two colours).
@@ -99,7 +100,7 @@ partial class ImageProcessing
         // Debug line that shows how many objects were detected.
         MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");
         DetectedObject a = detectedObjects[0];
-        MessageBox.Show("compactness: " + a.Compactness.ToString() + " omtrek/opp verhouding: " + a.AreaPerimeterRatio.ToString() + " omtrek: " + a.Perimeter.ToString() + " opp: " + a.Area.ToString());
+        MessageBox.Show("compactness: " + a.Compactness.ToString() + " omtrek/opp verhouding: " + a.AreaPerimeterRatio.ToString() + " rec: " + a.Rectangularity.ToString());
     }
 
     // Check for a given point if it is a perimeter pixel (That is, if any of its neighbouring pixel is a background pixel).
@@ -129,46 +130,9 @@ partial class ImageProcessing
         return neighbours;
     }
 
-    private List<string> GetCardTypes(List<DetectedObject> a)   //bepaal voor elk object het type,, moet voor elke kaart zijn dus er moet eigk nog een list gemaakt worden 
-    {                                                           // met voor elke kaart 1 object
-        List<string> objecttype = new List<string>();
-        for (int i = 0; i < a.Count(); i++)
-        {
-            objecttype.Add(CardType(a[i]));
-        }
-        MessageBox.Show(objecttype[1]);
-        return objecttype;
-    }
+    
+      
+    
 
-    // Determine the Card Type for an object.
-    public string CardType(DetectedObject a)
-    {
-        float v = a.AreaPerimeterRatio;         // Get the Area Perimeter Ratio of the DetectedObject.
-
-        int m1 = 0;     // Margin 1
-        int m2 = 0;     // Margin 2
-        int m3 = 0;     // Margin 3
-        int m4 = 0;     // Margin 4
-
-        string type = "";
-
-        if (v > 0 && v <= m1)   //hier moeten de verhoudingen van harten, ruiten, schoppen en klaveren, dit zijn nu nog examples
-        {
-            type = "Harten";
-        }
-        else if (v > m1 && v <= m2)
-        {
-            type = "Ruiten";
-        }
-        else if (v > m2 && v <= m3)
-        {
-            type = "Klaveren";
-        }
-        else if (v > m3 && v <= m4)
-        {
-            type = "Schoppen";
-        }
-
-        return type;
-    }
+    
 }

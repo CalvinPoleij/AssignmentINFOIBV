@@ -314,7 +314,7 @@ public partial class ImageProcessing : Form
 
         PrepareImageProcessing();
         TwoPassConnectedComponentLabeling();
-        GetCardTypes(detectedObjects);
+        
     }
 
     private void Dilation_Click(object sender, EventArgs e)

@@ -43,7 +43,6 @@ public class DetectedObject
         get { return (Perimeter * 2) / ((Math.PI * 4) * Area); }
     }
 
-
     // Constructor for initialization.
     public DetectedObject(int id)
     {
