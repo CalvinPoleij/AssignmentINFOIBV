@@ -6,7 +6,6 @@ using System.Windows.Forms;
 partial class ImageProcessing
 {
     public List<DetectedObject> detectedObjects = new List<DetectedObject>();
-    public List<DetectedCard> detectedCards = new List<DetectedCard>();
 
     // Based on the Two-pass Connected-component labeling algorithm.
     // Labels all the objects in a binary image (which means the image consists only of two colours).
@@ -139,10 +138,4 @@ partial class ImageProcessing
 
         return neighbours;
     }
-
-    
-      
-    
-
-    
 }

@@ -46,6 +46,11 @@ public class DetectedObject
         }
     }
 
+    public double Elongation
+    {
+        get { return MinimumBoundingBox().AspectRatio; }
+    }
+
     // Determine the compactness of the object, using the formula c = l(^2)/(4Pi * A)
     public double Compactness
     {

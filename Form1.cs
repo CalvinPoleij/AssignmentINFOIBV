@@ -241,8 +241,16 @@ public partial class ImageProcessing : Form
 
         PrepareImageProcessing();
 
+        ApplyThreshold();
+
+        CardDetection();
+
         ApplyThreshold(true);
+
         TwoPassConnectedComponentLabeling();
+
+        //CoupleObjectsWithCards();
+        //DetectCardSymbols();
 
         ShowOutputImage();
     }

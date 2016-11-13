@@ -49,6 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoundingBox.cs" />
+    <Compile Include="CardDetection.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Connected Component Labeling\DetectedCard.cs" />
     <Compile Include="Connected Component Labeling\ConnectedComponentLabeling.cs">
       <SubType>Form</SubType>
