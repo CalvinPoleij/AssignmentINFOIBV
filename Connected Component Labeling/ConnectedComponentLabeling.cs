@@ -87,20 +87,6 @@ partial class ImageProcessing
             }
         }
 
-        // Color an object red.
-        if (detectedObjects.Count > 0)
-        {
-            detectedObjects[0].ColorObject(Color.Red);
-            detectedObjects[0].ColorPerimeter(Color.Green);
-            detectedObjects[0].ColorBoundingBox(Color.Blue);
-
-            foreach (DetectedObject o in detectedObjects)
-            {
-                BoundingBox bb = o.MinimumBoundingBox();
-                if (bb != null) bb.ColorBoundingBox(Color.Cyan);
-            }
-        }
-
         // Debug line that shows how many objects were detected.
         MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");
 

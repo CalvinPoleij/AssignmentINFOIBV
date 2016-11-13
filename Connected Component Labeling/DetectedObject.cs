@@ -184,7 +184,13 @@ public class DetectedObject
     {
         if (minimumBoundingBox != null)
             return minimumBoundingBox;
-        return RotatingCalipers(ConvexHull());
+
+        BoundingBox mmb = RotatingCalipers(ConvexHull());
+
+        if (mmb == null)
+            return AxisAllignedBoundingBox();
+        else
+            return mmb;
     }
 
     // Calculate the Convex Hull using Jarvis March algorithm (Convex hull = a closed chain of perimeter points, needed for the minimum bouding box).

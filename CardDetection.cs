@@ -11,6 +11,7 @@ partial class ImageProcessing
 
     public double compactnessThresholdA = 1.3f, compactnessThresholdB = 1.8f;
     public double elongationThreshold = 1.15f;
+    public int cardAreaThreshold = 2000;
 
     // Based on the Two-pass Connected-component labeling algorithm.
     // Labels all the objects in a binary image (which means the image consists only of two colours).
@@ -91,18 +92,17 @@ partial class ImageProcessing
                 }
             }
         }
-
-        // Debug line that shows how many objects were detected.
-        MessageBox.Show(detectedCards.Count.ToString() + " cards have been detected.");
     }
 
     // Compares each detectedObject (not card!) to the detected cards, and determines on which card they belong.
     private void CoupleObjectsWithCards()
     {
+        // Remove the first detected Object. This is always the background of the image, so can safely be removed.
+        detectedObjects[0].ColorObject(Color.Black);
+        detectedObjects.RemoveAt(0);
+
         foreach (DetectedObject detectedObject in detectedObjects)
         {
-            // Check if any of the neighbours of the first perimeterPixel of the detectedObject belongs to the card.
-            // If so, this object is located on that card. Else, move on to the next card.
             Point perimeterPixel = detectedObject.perimeterPixels[0];
             List<Point> neighbours = GetPixelNeighbours(perimeterPixel.X, perimeterPixel.Y);
             bool coupled = false;
@@ -122,6 +122,29 @@ partial class ImageProcessing
                     break;
             }
         }
+
+        FilterCards();
+
+        // Debug line that shows how many objects were detected.
+        MessageBox.Show(detectedCards.Count.ToString() + " cards have been detected.");
+    }
+
+    // Filter out 'false' cards.
+    private void FilterCards()
+    {
+        List<DetectedCard> toBeRemoved = new List<DetectedCard>();
+        foreach (DetectedCard card in detectedCards)
+        {
+            if (card.cardSymbols.Count < 2 || card.Area < cardAreaThreshold)
+                toBeRemoved.Add(card);
+        }
+
+        // Remove each 'false' card from the detectedCards list.
+        foreach (DetectedCard card in toBeRemoved)
+        {
+            // Remove the false card.
+            detectedCards.Remove(card);
+        }
     }
 
     private void DetectCardSymbols()
@@ -131,7 +154,7 @@ partial class ImageProcessing
             if (detectedCard.cardSymbols.Count < 2)
                 continue;
 
-            DetectedObject symbol = detectedCard.cardSymbols[1];
+            DetectedObject symbol = detectedCard.cardSymbols[(int)Math.Ceiling((double)(detectedCard.cardSymbols.Count / 2))];
 
             // Series of if statements to determine what the symbol is.
             // If below the compactness threshold A, the symbol could be either a Heart of a Diamond.
@@ -151,7 +174,7 @@ partial class ImageProcessing
                 detectedCard.cardType = DetectedCard.CardType.Clubs;
 
             detectedCard.ColorCard();
-            MessageBox.Show("Card " + detectedCard.id + " has type " + detectedCard.cardType);
+            MessageBox.Show("Card " + detectedCard.id + " has type " + detectedCard.cardType + ", with value " + detectedCard.CardValue);
         }
     }
 }

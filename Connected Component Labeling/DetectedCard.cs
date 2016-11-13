@@ -15,9 +15,17 @@ public class DetectedCard : DetectedObject
     {
     }
 
-    public int CardValue
+    public string CardValue
     {
-        get { return cardSymbols.Count; }
+        get
+        {
+            if (cardSymbols.Count >= 16)
+                return 10.ToString();
+            else if (cardSymbols.Count == 5)
+                return "A";
+            else
+                return (cardSymbols.Count - 4).ToString();
+        }
     }
 
     public void ColorCard()
