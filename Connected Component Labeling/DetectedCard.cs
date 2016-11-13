@@ -15,6 +15,7 @@ public class DetectedCard : DetectedObject
     {
     }
 
+    // Determines the value of the card by counting the amount of objects on the card.
     public string CardValue
     {
         get
@@ -28,10 +29,12 @@ public class DetectedCard : DetectedObject
         }
     }
 
-    public void ColorCard()
+    // Give the card a color, and all objects on it as well.
+    public void ColorCard(int greyValue)
     {
-        int greyValue = (int)ImageProcessing.imageProcessing.Clamp(150 / ImageProcessing.imageProcessing.detectedCards.Count * id, 0, 205);
-        Color color = Color.FromArgb(50 + greyValue, 50 + greyValue, 50 + greyValue);
+        greyValue = (int)ImageProcessing.imageProcessing.Clamp(greyValue, 0, 255);
+
+        Color color = Color.FromArgb(greyValue, greyValue, greyValue);
 
         ColorObject(color);
 
@@ -44,7 +47,7 @@ public class DetectedCard : DetectedObject
                 color = Combine(color, Color.Blue);
                 break;
             case CardType.Clubs:
-                color = Color.Green;
+                color = Combine(color, Color.Green);
                 break;
             case CardType.Spades:
                 color = Combine(color, Color.Yellow);
@@ -55,6 +58,7 @@ public class DetectedCard : DetectedObject
             symbol.ColorObject(color);
     }
 
+    // Combines two colors.
     public static Color Combine(Color a, Color b, float amount = 0.5f)
     {
         return Color.FromArgb((int)(a.R * amount + b.R * amount), (int)(a.G * amount + b.G * amount), (int)(a.B * amount + b.B * amount));

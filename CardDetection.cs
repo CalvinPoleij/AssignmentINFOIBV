@@ -121,11 +121,9 @@ partial class ImageProcessing
                     break;
             }
         }
-
-        FilterCards();
     }
 
-    // Filter out 'false' cards.
+    // Filter out 'false' cards. (Cards with no objects on them, or cards that are too small)
     private void FilterCards()
     {
         List<DetectedCard> toBeRemoved = new List<DetectedCard>();
@@ -145,6 +143,8 @@ partial class ImageProcessing
 
     private void DetectCardSymbols()
     {
+        int cardCounter = 1;
+
         foreach (DetectedCard detectedCard in detectedCards)
         {
             if (detectedCard.cardSymbols.Count < 2)
@@ -156,6 +156,7 @@ partial class ImageProcessing
             // If below the compactness threshold A, the symbol could be either a Heart of a Diamond.
             // If above the compactness threshold A, the symbol could be either a Club (Klaver) or a Spade (Schoppen).
             // The Clubs are always above the compactness threshold B.
+            // Hearts and Diamonds can be told apart by their elongation.
 
             if (symbol.Compactness < compactnessThresholdA)
             {
@@ -169,7 +170,8 @@ partial class ImageProcessing
             else
                 detectedCard.cardType = DetectedCard.CardType.Clubs;
 
-            detectedCard.ColorCard();
+            detectedCard.ColorCard(40 + cardCounter * 25);
+            cardCounter++;
         }
     }
 

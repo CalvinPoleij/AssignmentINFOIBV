@@ -230,7 +230,7 @@ public partial class ImageProcessing : Form
         ShowOutputImage();
     }
 
-    private void componentLabelingButton_Click(object sender, EventArgs e)
+    private void CardDetectionButton_Click(object sender, EventArgs e)
     {
         // Check if there is an input image.
         if (inputImage == null)
@@ -241,18 +241,31 @@ public partial class ImageProcessing : Form
 
         PrepareImageProcessing();
 
+        // Normal thresholding to detect cards.
         ApplyThreshold(CardDetectionThresholdTracker);
 
+        // Detect the cards.
         CardDetection();
 
+        // Negative thresholding to detect objects on the cards.
         ApplyThreshold(CardDetectionThresholdTracker, true);
 
+        // Detect objects on the cards.
         TwoPassConnectedComponentLabeling();
 
+        // Determine which objects belong to what card, and thus the value of a card.
         CoupleObjectsWithCards();
+
+        // Filter away fake card objects.
+        FilterCards();
+
+        // Detect the symbol of a card.
         DetectCardSymbols();
+
+        // Show the calculated information on the screen.
         ShowInformation();
 
+        // Show the output image on the screen.
         ShowOutputImage();
     }
 

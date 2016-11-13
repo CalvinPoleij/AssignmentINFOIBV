@@ -334,7 +334,7 @@
             this.componentLabelingButton.TabIndex = 24;
             this.componentLabelingButton.Text = "Detect Cards";
             this.componentLabelingButton.UseVisualStyleBackColor = true;
-            this.componentLabelingButton.Click += new System.EventHandler(this.componentLabelingButton_Click);
+            this.componentLabelingButton.Click += new System.EventHandler(this.CardDetectionButton_Click);
             // 
             // panel2
             // 
