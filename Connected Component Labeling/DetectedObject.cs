@@ -47,7 +47,7 @@ public class DetectedObject
     // Determine the compactness of the object, using the formula c = l(^2)/(4Pi * A)
     public double Compactness
     {
-        get { return (Perimeter * 2) / ((Math.PI * 4) * Area); }
+        get { return (Perimeter * Perimeter) / ((Math.PI * 4) * Area); }
     }
 
     // Constructor for initialization.
@@ -75,9 +75,6 @@ public class DetectedObject
                     perimeterPixels.Add(pixel);
             }
         }
-
-        if (pixels.Count == 0)
-            ImageProcessing.imageProcessing.detectedObjects.Remove(this);
     }
 
     // Dilates an object.
@@ -178,7 +175,7 @@ public class DetectedObject
     }
 
     // Calculate the Convex Hull using Jarvis March algorithm (Convex hull = a closed chain of perimeter points, needed for the minimum bouding box).
-    public List<Point> ConvexHull()
+    public List<Point> ConvexHull(bool color = true)
     {
         if (perimeterPixels.Count < 3)
         {
@@ -193,7 +190,6 @@ public class DetectedObject
         do
         {
             convexHullPoints.Insert(0, hullPoint);
-            ImageProcessing.imageProcessing.image[hullPoint.X, hullPoint.Y] = Color.Yellow;
             endPoint = perimeterPixels[0];
 
             for (int i = 1; i < perimeterPixels.Count; i++)
@@ -212,17 +208,25 @@ public class DetectedObject
         }
         while (convexHullPoints[convexHullPoints.Count - 1] != endPoint);
 
+        // Color the found convex hull points (mainly for debugging purposes).
+        if (color)
+        {
+            foreach (Point point in convexHullPoints)
+                ImageProcessing.imageProcessing.image[point.X, point.Y] = Color.LimeGreen;
+        }
+
         return convexHullPoints;
     }
 
-    // Rotating Calipers algorithm. Uses the Convex Hull to calculate the Minimum Bounding Box.
+    // Use the Convex Hull to calculate the Minimum Bounding Box, via the Rotating Calipers algorithm.
     public BoundingBox RotatingCalipers(List<Point> convexHull)
     {
+        // If there is no convex hull, return, as this method cannot be executed properly.
         if (convexHull == null || convexHull.Count == 0)
             return null;
 
-        BoundingBox minimumBoundingBox = AxisAllignedBoundingBox();
-        double smallestBoundingBoxArea = minimumBoundingBox.Area;
+        BoundingBox minimumBoundingBox = null;
+        double smallestBoundingBoxArea = int.MaxValue;
 
         List<Vector2> edgeDirections = new List<Vector2>();
 
@@ -232,7 +236,7 @@ public class DetectedObject
             Point a = convexHull[(i + 1) % convexHull.Count];
             Point b = convexHull[i];
 
-            Vector2 edgeDirection = new Vector2(a.X - b.X, a.Y - b.Y);
+            Vector2 edgeDirection = Vector2.Difference(a, b);
             edgeDirections.Add(edgeDirection.Normalize());
         }
 
@@ -248,14 +252,16 @@ public class DetectedObject
         Vector2 minY = new Vector2(convexHull[minYIndex].X, convexHull[minYIndex].Y);
         Vector2 maxY = new Vector2(convexHull[maxYIndex].X, convexHull[maxYIndex].Y);
 
-        // Directional Vectors at the start of the Rotating Clippers algorithm.
+        // Directional Vectors at the start of the Rotating Calipers algorithm.
         Vector2 topSideDirection = new Vector2(-1, 0);          // Direction: left
         Vector2 bottomSideDirection = new Vector2(1, 0);        // Direction: right
         Vector2 rightSideDirection = new Vector2(0, 1);         // Direction: up
         Vector2 leftSideDirection = new Vector2(0, -1);         // Direction: down
 
+        // Rotating Calipers algorithm.
         for (int i = 0; i < convexHull.Count; i++)
         {
+            // Per side (left, right, top bottom), calculate its angle.
             List<double> angles = new List<double>()
             {
                 Math.Acos(Vector2.Dot(leftSideDirection, edgeDirections[minXIndex])),
@@ -267,7 +273,7 @@ public class DetectedObject
             // Check which of the four sides has the smallest angle.
             int smallestAngleIndex = angles.FindIndex(x => x == angles.Min());
 
-            // Rotate 
+            // Rotate the dynamically adjustable Caliper around the convex hull, depending on which side has the smallest angle.
             switch (smallestAngleIndex)
             {
                 case 0:
@@ -306,6 +312,7 @@ public class DetectedObject
             Point bottomLeft = IntersectionPoint(minY, bottomSideDirection, minX, leftSideDirection);
             Point bottomRight = IntersectionPoint(minY, bottomSideDirection, maxX, rightSideDirection);
 
+            // Compare the new bounding box to the smallest found bounding box.
             double boundingBoxArea = Vector2.Distance(topLeft, topRight) * Vector2.Distance(topLeft, bottomLeft);
             if (boundingBoxArea < smallestBoundingBoxArea)
             {
@@ -321,7 +328,8 @@ public class DetectedObject
     private Point IntersectionPoint(Vector2 aPos, Vector2 aDir, Vector2 bPos, Vector2 bDir)
     {
         Vector2 delta = bPos - aPos;
-        aDir *= (delta.X * bDir.Y - delta.Y * bDir.X) / Vector2.Cross(aDir, bDir);
-        return new Point((int)(aPos.X + aDir.X), (int)(aPos.Y + aDir.Y));
+        Vector2 newDirection = aDir * ((delta.X * bDir.Y - delta.Y * bDir.X) / Vector2.Cross(aDir, bDir));
+
+        return new Point((int)(aPos.X + newDirection.X), (int)(aPos.Y + newDirection.Y));
     }
 }

@@ -49,6 +49,16 @@ public class Vector2
         return a.X * b.Y - b.X * a.Y;
     }
 
+    public static Vector2 Difference(Vector2 a, Vector2 b)
+    {
+        return new Vector2(a.X - b.X, a.Y - b.Y);
+    }
+
+    public static Vector2 Difference(Point a, Point b)
+    {
+        return new Vector2(a.X - b.X, a.Y - b.Y);
+    }
+
     public static double Distance(Vector2 a, Vector2 b)
     {
         float deltaX = a.X - b.X;

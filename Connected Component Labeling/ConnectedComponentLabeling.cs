@@ -95,17 +95,21 @@ partial class ImageProcessing
             detectedObjects[0].ColorPerimeter(Color.Green);
             detectedObjects[0].ColorBoundingBox(Color.Blue);
 
-            if (detectedObjects.Count > 1)
+            foreach (DetectedObject o in detectedObjects)
             {
-                BoundingBox bb = detectedObjects[1].MinimumBoundingBox();
-                if (bb != null) bb.ColorBoundingBox(Color.Orange);
+                BoundingBox bb = o.MinimumBoundingBox();
+                if (bb != null) bb.ColorBoundingBox(Color.Cyan);
             }
         }
 
         // Debug line that shows how many objects were detected.
         MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");
-        DetectedObject a = detectedObjects[0];
-        MessageBox.Show("compactness: " + a.Compactness.ToString() + " omtrek/opp verhouding: " + a.AreaPerimeterRatio.ToString() + " rec: " + a.Rectangularity.ToString());
+
+        if (detectedObjects.Count > 0)
+        {
+            DetectedObject a = detectedObjects[0];
+            MessageBox.Show("compactness: " + a.Compactness.ToString() + " omtrek/opp verhouding: " + a.AreaPerimeterRatio.ToString() + " rec: " + a.Rectangularity.ToString());
+        }
     }
 
     // Check for a given point if it is a perimeter pixel (That is, if any of its neighbouring pixel is a background pixel).

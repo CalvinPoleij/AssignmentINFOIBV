@@ -6,6 +6,7 @@ using System.Text;
 
 public class BoundingBox
 {
+    public List<Point> points;
     public Point topLeft;
     public Point topRight;
     public Point bottomLeft;
@@ -24,6 +25,12 @@ public class BoundingBox
     public double Area
     {
         get { return Width * Height; }
+    }
+
+    // Also known as 'Elongation': Ratio of the longest and shortest side.
+    public double AspectRatio
+    {
+        get { return Math.Max(Width, Height) / Math.Min(Width, Height); }
     }
 
     public int Left
@@ -52,16 +59,20 @@ public class BoundingBox
         this.topRight = topRight;
         this.bottomLeft = bottomLeft;
         this.bottomRight = bottomRight;
+
+        points = new List<Point>() { topLeft, topRight, bottomLeft, bottomRight };
     }
 
     public void ColorBoundingBox(Color color)
     {
-        if (Top > ImageProcessing.imageProcessing.inputImage.Height || Bottom < 0 || Left < 0 || Right > ImageProcessing.imageProcessing.inputImage.Width)
-            return;
+        foreach (Point p in points)
+        {
+            if (p.X < 0 || p.X >= ImageProcessing.imageProcessing.inputImage.Width - 1)
+                continue;
+            if (p.Y < 0 || p.Y >= ImageProcessing.imageProcessing.inputImage.Height - 1)
+                continue;
 
-        ImageProcessing.imageProcessing.image[topLeft.X, topLeft.Y] = color;
-        ImageProcessing.imageProcessing.image[topRight.X, topRight.Y] = color;
-        ImageProcessing.imageProcessing.image[bottomLeft.X, bottomLeft.Y] = color;
-        ImageProcessing.imageProcessing.image[bottomRight.X, bottomRight.Y] = color;
+            ImageProcessing.imageProcessing.image[p.X, p.Y] = color;
+        }
     }
 }
