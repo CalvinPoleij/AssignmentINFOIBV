@@ -23,7 +23,7 @@ public class DetectedObject
         get { return perimeterPixels.Count; }
     }
 
-    public float AreaPerimeterRatio
+    public float AreaPerimeterRatio     //verhouding van omtrek tot oppervlakte
     {
         get
         {
@@ -34,7 +34,7 @@ public class DetectedObject
         }
     }
 
-    public double Rectangularity
+    public double Rectangularity        //bereken rectangularity, gebruikt in objectdetectie
     {
         get
         {
@@ -46,7 +46,7 @@ public class DetectedObject
         }
     }
 
-    public double Elongation
+    public double Elongation            //bereken elongation, gebruik in objectdetectie
     {
         get { return MinimumBoundingBox().AspectRatio; }
     }
