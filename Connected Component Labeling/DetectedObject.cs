@@ -10,6 +10,9 @@ public class DetectedObject
     public List<Point> pixels = new List<Point>();
     public List<Point> perimeterPixels = new List<Point>();
 
+    public BoundingBox minimumBoundingBox;
+    public BoundingBox axisAllignedBoundingBox;
+
     // Properties
     public int Area
     {
@@ -160,17 +163,23 @@ public class DetectedObject
         if (perimeterPixels.Count == 0)
             return null;
 
+        if (axisAllignedBoundingBox != null)
+            return axisAllignedBoundingBox;
+
         int minX = perimeterPixels.Min(p => p.X);
         int maxX = perimeterPixels.Max(p => p.X);
         int minY = perimeterPixels.Min(p => p.Y);
         int maxY = perimeterPixels.Max(p => p.Y);
 
-        return new BoundingBox(new Point(minX, maxY), new Point(maxX, maxY), new Point(minX, minY), new Point(maxX, minY));
+        axisAllignedBoundingBox = new BoundingBox(new Point(minX, maxY), new Point(maxX, maxY), new Point(minX, minY), new Point(maxX, minY));
+        return axisAllignedBoundingBox;
     }
 
     // Calculate the Minimum Bounding Box of the object.
     public BoundingBox MinimumBoundingBox()
     {
+        if (minimumBoundingBox != null)
+            return minimumBoundingBox;
         return RotatingCalipers(ConvexHull());
     }
 
@@ -321,10 +330,13 @@ public class DetectedObject
             }
         }
 
+        // Save the found minimum bounding box as a field variable, for efficiency.
+        this.minimumBoundingBox = minimumBoundingBox;
+
         return minimumBoundingBox;
     }
 
-    // Calculate the point of intersection of two line segments.
+    // Calculate the point of intersection of two line segments. (Used in RotatingCalipers() method)
     private Point IntersectionPoint(Vector2 aPos, Vector2 aDir, Vector2 bPos, Vector2 bDir)
     {
         Vector2 delta = bPos - aPos;
