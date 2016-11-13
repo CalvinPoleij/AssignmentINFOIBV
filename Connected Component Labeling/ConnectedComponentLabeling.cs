@@ -107,8 +107,10 @@ partial class ImageProcessing
 
         if (detectedObjects.Count > 0)
         {
-            DetectedObject a = detectedObjects[0];
-            MessageBox.Show("compactness: " + a.Compactness.ToString() + " omtrek/opp verhouding: " + a.AreaPerimeterRatio.ToString() + " rec: " + a.Rectangularity.ToString());
+            for(int i = 0; i < detectedObjects.Count; i++)
+            { MessageBox.Show("compactness: " + detectedObjects[i].Compactness.ToString() + " rec: " + detectedObjects[i].Rectangularity.ToString()); }
+            //DetectedObject a = detectedObjects[0];
+           // MessageBox.Show("compactness: " + a.Compactness.ToString() + " omtrek/opp verhouding: " + a.AreaPerimeterRatio.ToString() + " rec: " + a.Rectangularity.ToString());
         }
     }
 
