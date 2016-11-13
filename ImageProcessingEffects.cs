@@ -98,7 +98,10 @@ partial class ImageProcessing
     public void Dilation(int dilationLevel = 1)
     {
         if (detectedObjects.Count == 0)
+        {
             MessageBox.Show("Detect objects before attempting dilation!");
+            return;
+        }
 
         foreach (DetectedObject c in detectedObjects)
             c.Dilation(dilationLevel);
@@ -108,7 +111,10 @@ partial class ImageProcessing
     public void Erosion(int erosionLevel = 1)
     {
         if (detectedObjects.Count == 0)
+        {
             MessageBox.Show("Detect objects before attempting erosion!");
+            return;
+        }
 
         foreach (DetectedObject c in detectedObjects)
             c.Erosion(erosionLevel);

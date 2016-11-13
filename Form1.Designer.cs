@@ -53,10 +53,13 @@
             this.clearInputButton = new System.Windows.Forms.Button();
             this.clearOutputButton = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.CardInfoLabel = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.panel8 = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
             this.panel7 = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
+            this.CardDetectionThresholdTracker = new System.Windows.Forms.TrackBar();
             this.panel4 = new System.Windows.Forms.Panel();
             this.label6 = new System.Windows.Forms.Label();
             this.panel5 = new System.Windows.Forms.Panel();
@@ -64,9 +67,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.panel6 = new System.Windows.Forms.Panel();
-            this.label8 = new System.Windows.Forms.Label();
-            this.CardInfoLabel = new System.Windows.Forms.Label();
-            this.CardDetectionThresholdTracker = new System.Windows.Forms.TrackBar();
+            this.ClearText = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -78,10 +79,10 @@
             this.panel3.SuspendLayout();
             this.panel8.SuspendLayout();
             this.panel7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CardDetectionThresholdTracker)).BeginInit();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CardDetectionThresholdTracker)).BeginInit();
             this.SuspendLayout();
             // 
             // LoadImageButton
@@ -341,6 +342,7 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.ClearText);
             this.panel2.Controls.Add(this.label7);
             this.panel2.Controls.Add(this.clearInputButton);
             this.panel2.Controls.Add(this.clearOutputButton);
@@ -350,7 +352,7 @@
             this.panel2.Location = new System.Drawing.Point(8, 34);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(215, 195);
+            this.panel2.Size = new System.Drawing.Size(275, 195);
             this.panel2.TabIndex = 20;
             // 
             // label7
@@ -370,7 +372,7 @@
             this.clearInputButton.Location = new System.Drawing.Point(10, 154);
             this.clearInputButton.Margin = new System.Windows.Forms.Padding(4);
             this.clearInputButton.Name = "clearInputButton";
-            this.clearInputButton.Size = new System.Drawing.Size(93, 31);
+            this.clearInputButton.Size = new System.Drawing.Size(62, 31);
             this.clearInputButton.TabIndex = 15;
             this.clearInputButton.Text = "All";
             this.clearInputButton.UseVisualStyleBackColor = true;
@@ -379,7 +381,7 @@
             // clearOutputButton
             // 
             this.clearOutputButton.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clearOutputButton.Location = new System.Drawing.Point(108, 154);
+            this.clearOutputButton.Location = new System.Drawing.Point(80, 154);
             this.clearOutputButton.Margin = new System.Windows.Forms.Padding(4);
             this.clearOutputButton.Name = "clearOutputButton";
             this.clearOutputButton.Size = new System.Drawing.Size(91, 31);
@@ -401,6 +403,28 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(374, 728);
             this.panel3.TabIndex = 14;
+            // 
+            // CardInfoLabel
+            // 
+            this.CardInfoLabel.AutoSize = true;
+            this.CardInfoLabel.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CardInfoLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.CardInfoLabel.Location = new System.Drawing.Point(12, 79);
+            this.CardInfoLabel.Name = "CardInfoLabel";
+            this.CardInfoLabel.Size = new System.Drawing.Size(0, 22);
+            this.CardInfoLabel.TabIndex = 26;
+            this.CardInfoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Arial", 13.97015F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(6, 8);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(263, 32);
+            this.label8.TabIndex = 25;
+            this.label8.Text = "CARD DETECTION";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // panel8
             // 
@@ -430,7 +454,7 @@
             this.panel7.Location = new System.Drawing.Point(3, 491);
             this.panel7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(235, 237);
+            this.panel7.Size = new System.Drawing.Size(295, 237);
             this.panel7.TabIndex = 21;
             // 
             // label4
@@ -443,6 +467,17 @@
             this.label4.TabIndex = 22;
             this.label4.Text = "OTHERS";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // CardDetectionThresholdTracker
+            // 
+            this.CardDetectionThresholdTracker.Location = new System.Drawing.Point(207, 44);
+            this.CardDetectionThresholdTracker.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.CardDetectionThresholdTracker.Maximum = 20;
+            this.CardDetectionThresholdTracker.Name = "CardDetectionThresholdTracker";
+            this.CardDetectionThresholdTracker.Size = new System.Drawing.Size(79, 64);
+            this.CardDetectionThresholdTracker.TabIndex = 27;
+            this.CardDetectionThresholdTracker.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.CardDetectionThresholdTracker.Value = 16;
             // 
             // panel4
             // 
@@ -531,38 +566,18 @@
             this.panel6.Size = new System.Drawing.Size(1419, 718);
             this.panel6.TabIndex = 21;
             // 
-            // label8
+            // ClearText
             // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Arial", 13.97015F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(6, 8);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(263, 32);
-            this.label8.TabIndex = 25;
-            this.label8.Text = "CARD DETECTION";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // CardInfoLabel
-            // 
-            this.CardInfoLabel.AutoSize = true;
-            this.CardInfoLabel.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CardInfoLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.CardInfoLabel.Location = new System.Drawing.Point(12, 79);
-            this.CardInfoLabel.Name = "CardInfoLabel";
-            this.CardInfoLabel.Size = new System.Drawing.Size(0, 22);
-            this.CardInfoLabel.TabIndex = 26;
-            this.CardInfoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // CardDetectionThresholdTracker
-            // 
-            this.CardDetectionThresholdTracker.Location = new System.Drawing.Point(207, 44);
-            this.CardDetectionThresholdTracker.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.CardDetectionThresholdTracker.Maximum = 20;
-            this.CardDetectionThresholdTracker.Name = "CardDetectionThresholdTracker";
-            this.CardDetectionThresholdTracker.Size = new System.Drawing.Size(79, 64);
-            this.CardDetectionThresholdTracker.TabIndex = 27;
-            this.CardDetectionThresholdTracker.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.CardDetectionThresholdTracker.Value = 18;
+            this.ClearText.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ClearText.Location = new System.Drawing.Point(178, 154);
+            this.ClearText.Margin = new System.Windows.Forms.Padding(4);
+            this.ClearText.Name = "ClearText";
+            this.ClearText.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.ClearText.Size = new System.Drawing.Size(79, 31);
+            this.ClearText.TabIndex = 24;
+            this.ClearText.Text = "Text";
+            this.ClearText.UseVisualStyleBackColor = true;
+            this.ClearText.Click += new System.EventHandler(this.ClearText_Click);
             // 
             // ImageProcessing
             // 
@@ -596,13 +611,13 @@
             this.panel8.PerformLayout();
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CardDetectionThresholdTracker)).EndInit();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CardDetectionThresholdTracker)).EndInit();
             this.ResumeLayout(false);
 
     }
@@ -652,5 +667,6 @@
     private System.Windows.Forms.Label CardInfoLabel;
     private System.Windows.Forms.Label label8;
     private System.Windows.Forms.TrackBar CardDetectionThresholdTracker;
+    private System.Windows.Forms.Button ClearText;
 }
 

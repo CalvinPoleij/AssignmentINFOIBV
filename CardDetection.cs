@@ -11,6 +11,7 @@ partial class ImageProcessing
     public double compactnessThresholdA = 1.3f, compactnessThresholdB = 1.8f;
     public double elongationThreshold = 1.15f;
     public int cardAreaThreshold = 2000;
+    public int cardObjectAreaThreshold = 10;
 
     // Based on the Two-pass Connected-component labeling algorithm.
     // Labels all the objects in a binary image (which means the image consists only of two colours).
@@ -112,7 +113,10 @@ partial class ImageProcessing
                 foreach (Point pixel in neighbours)
                     if (detectedCard.pixels.Contains(pixel))
                     {
-                        detectedCard.cardSymbols.Add(detectedObject);
+                        if (detectedObject.Area > cardObjectAreaThreshold)
+                            detectedCard.cardSymbols.Add(detectedObject);
+                        else
+                            MakePartOfCard(detectedObject);
                         coupled = true;
                         break;
                     }
@@ -121,6 +125,10 @@ partial class ImageProcessing
                     break;
             }
         }
+    }
+
+    private void MakePartOfCard(DetectedObject detectedObject)
+    {
     }
 
     // Filter out 'false' cards. (Cards with no objects on them, or cards that are too small)
@@ -143,7 +151,7 @@ partial class ImageProcessing
 
     private void DetectCardSymbols()
     {
-        int cardCounter = 1;
+        int cardCounter = 0;
 
         foreach (DetectedCard detectedCard in detectedCards)
         {
@@ -170,7 +178,7 @@ partial class ImageProcessing
             else
                 detectedCard.cardType = DetectedCard.CardType.Clubs;
 
-            detectedCard.ColorCard(40 + cardCounter * 25);
+            detectedCard.ColorCard(255 - cardCounter * 25);
             cardCounter++;
         }
     }

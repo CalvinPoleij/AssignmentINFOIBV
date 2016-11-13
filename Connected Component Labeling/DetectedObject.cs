@@ -97,7 +97,7 @@ public class DetectedObject
             foreach (Point p in perimeterPixels)
             {
                 foreach (Point n in ImageProcessing.imageProcessing.GetPixelNeighbours(p.X, p.Y))
-                    if (ImageProcessing.imageProcessing.image[n.X, n.Y] == ImageProcessing.imageProcessing.backgroundColor)
+                    if (ImageProcessing.imageProcessing.image[n.X, n.Y] != ImageProcessing.imageProcessing.foregroundColor)
                     {
                         ImageProcessing.imageProcessing.image[n.X, n.Y] = ImageProcessing.imageProcessing.foregroundColor;
                         toBeAdded.Add(n);

@@ -145,6 +145,9 @@ public partial class ImageProcessing : Form
         outputImage = null;
         pictureBox1.Image = null;
         pictureBox2.Image = null;
+
+        detectedObjects.Clear();
+        detectedCards.Clear();
     }
 
     // Clears the output image.
@@ -278,7 +281,6 @@ public partial class ImageProcessing : Form
             return;
         }
 
-        PrepareImageProcessing();
         Erosion(Erosion_slider.Value);
         ShowOutputImage();
     }
@@ -292,9 +294,13 @@ public partial class ImageProcessing : Form
             return;
         }
 
-        PrepareImageProcessing();
-        detectedObjects[0].Dilation(Dilation_slider.Value);
+        Dilation(Dilation_slider.Value);
         ShowOutputImage();
+    }
+
+    private void ClearText_Click(object sender, EventArgs e)
+    {
+        CardInfoLabel.Text = "";
     }
 
     #endregion
@@ -348,8 +354,6 @@ public partial class ImageProcessing : Form
         // Hide progress bar
         progressBar.Value = 1;
     }
-
-
 
     #endregion
 }

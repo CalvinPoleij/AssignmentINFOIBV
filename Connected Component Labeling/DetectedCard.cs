@@ -23,7 +23,7 @@ public class DetectedCard : DetectedObject
             if (cardSymbols.Count >= 16)
                 return "10";
             else if (cardSymbols.Count == 5)
-                return "Ace (A)";
+                return "Ace";
             else
                 return (cardSymbols.Count - 4).ToString();
         }
