@@ -9,8 +9,8 @@ partial class ImageProcessing
 {
     public List<DetectedCard> detectedCards = new List<DetectedCard>();
 
-    public float compactnessThresholdA = 1.3f, compactnessThresholdB = 1.8f;
-    public float elongationThreshold = 1.15f;
+    public double compactnessThresholdA = 1.3f, compactnessThresholdB = 1.8f;
+    public double elongationThreshold = 1.15f;
 
     // Based on the Two-pass Connected-component labeling algorithm.
     // Labels all the objects in a binary image (which means the image consists only of two colours).
@@ -128,7 +128,10 @@ partial class ImageProcessing
     {
         foreach (DetectedCard detectedCard in detectedCards)
         {
-            DetectedObject symbol = detectedCard.cardSymbols[2];
+            if (detectedCard.cardSymbols.Count < 2)
+                continue;
+
+            DetectedObject symbol = detectedCard.cardSymbols[1];
 
             // Series of if statements to determine what the symbol is.
             // If below the compactness threshold A, the symbol could be either a Heart of a Diamond.
@@ -148,6 +151,7 @@ partial class ImageProcessing
                 detectedCard.cardType = DetectedCard.CardType.Clubs;
 
             detectedCard.ColorCard();
+            MessageBox.Show("Card " + detectedCard.id + " has type " + detectedCard.cardType);
         }
     }
 }

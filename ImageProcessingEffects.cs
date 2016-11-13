@@ -117,7 +117,7 @@ partial class ImageProcessing
     }
 
     // Clamps a value between a minimum and maximum value.
-    private double Clamp(double value, double min, double max)
+    public double Clamp(double value, double min, double max)
     {
         if (value < min)
             value = min;

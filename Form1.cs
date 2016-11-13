@@ -249,8 +249,8 @@ public partial class ImageProcessing : Form
 
         TwoPassConnectedComponentLabeling();
 
-        //CoupleObjectsWithCards();
-        //DetectCardSymbols();
+        CoupleObjectsWithCards();
+        DetectCardSymbols();
 
         ShowOutputImage();
     }

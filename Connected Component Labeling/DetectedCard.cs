@@ -22,7 +22,7 @@ public class DetectedCard : DetectedObject
 
     public void ColorCard()
     {
-        int greyValue = 150 / ImageProcessing.imageProcessing.detectedCards.Count * id;
+        int greyValue = (int)ImageProcessing.imageProcessing.Clamp(150 / ImageProcessing.imageProcessing.detectedCards.Count * id, 0, 205);
         Color color = Color.FromArgb(50 + greyValue, 50 + greyValue, 50 + greyValue);
 
         ColorObject(color);
@@ -36,7 +36,7 @@ public class DetectedCard : DetectedObject
                 color = Combine(color, Color.Blue);
                 break;
             case CardType.Clubs:
-                color = Combine(color, Color.Green);
+                color = Color.Green;
                 break;
             case CardType.Spades:
                 color = Combine(color, Color.Yellow);
