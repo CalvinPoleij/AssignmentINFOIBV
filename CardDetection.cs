@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 partial class ImageProcessing
@@ -124,9 +123,6 @@ partial class ImageProcessing
         }
 
         FilterCards();
-
-        // Debug line that shows how many objects were detected.
-        MessageBox.Show(detectedCards.Count.ToString() + " cards have been detected.");
     }
 
     // Filter out 'false' cards.
@@ -174,7 +170,22 @@ partial class ImageProcessing
                 detectedCard.cardType = DetectedCard.CardType.Clubs;
 
             detectedCard.ColorCard();
-            MessageBox.Show("Card " + detectedCard.id + " has type " + detectedCard.cardType + ", with value " + detectedCard.CardValue);
+        }
+    }
+
+    // Show information on the screen about the cards that have been detected.
+    private void ShowInformation()
+    {
+        if (detectedCards.Count == 1)
+            CardInfoLabel.Text = "1 card has been detected.";
+        else
+            CardInfoLabel.Text = detectedCards.Count + " cards have been detected.";
+
+        int cardCount = 1;
+        foreach (DetectedCard card in detectedCards)
+        {
+            CardInfoLabel.Text += "\nCard " + cardCount + " has type " + card.cardType + ", with value " + card.CardValue;
+            cardCount++;
         }
     }
 }

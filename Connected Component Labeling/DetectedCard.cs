@@ -20,9 +20,9 @@ public class DetectedCard : DetectedObject
         get
         {
             if (cardSymbols.Count >= 16)
-                return 10.ToString();
+                return "10";
             else if (cardSymbols.Count == 5)
-                return "A";
+                return "Ace (A)";
             else
                 return (cardSymbols.Count - 4).ToString();
         }

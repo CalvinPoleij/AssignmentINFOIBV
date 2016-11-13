@@ -42,17 +42,17 @@ partial class ImageProcessing
     }
 
     // Applies thresholding to an image, given a threshold value. Returns a binary image.
-    private void ApplyThreshold(bool negative = false)
+    private void ApplyThreshold(TrackBar tracker, bool negative = false)
     {
-        double thresholdValue = thresholdTracker.Value;
+        double thresholdValue = tracker.Value;
 
         if (negative)
         {
             ApplyNegative();
-            thresholdValue = thresholdTracker.Maximum - thresholdValue;
+            thresholdValue = tracker.Maximum - thresholdValue;
         }
 
-        thresholdValue /= thresholdTracker.Maximum;
+        thresholdValue /= tracker.Maximum;
 
         // Convert image to black and white based on average brightness
         for (int y = 0; y < inputImage.Height; y++)
@@ -101,9 +101,7 @@ partial class ImageProcessing
             MessageBox.Show("Detect objects before attempting dilation!");
 
         foreach (DetectedObject c in detectedObjects)
-        {
             c.Dilation(dilationLevel);
-        }
     }
 
     // Erosion effect on all deteced objects.

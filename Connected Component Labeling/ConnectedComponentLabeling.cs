@@ -86,16 +86,6 @@ partial class ImageProcessing
                 }
             }
         }
-
-        // Debug line that shows how many objects were detected.
-        MessageBox.Show(detectedObjects.Count.ToString() + " objects have been detected.");
-
-        //if (detectedObjects.Count > 0)
-        //{
-        //    for(int i = 0; i < detectedObjects.Count; i++)
-        //    { MessageBox.Show("compactness: " + detectedObjects[i].Compactness.ToString() + " rec: " + detectedObjects[i].Rectangularity.ToString() + " elong: " + detectedObjects[i].minimumBoundingBox.AspectRatio); }
-            
-        //}
     }
 
     // Check for a given point if it is a perimeter pixel (That is, if any of its neighbouring pixel is a background pixel).

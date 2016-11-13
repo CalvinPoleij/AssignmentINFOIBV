@@ -225,7 +225,7 @@ public partial class ImageProcessing : Form
         PrepareImageProcessing();
 
         // Apply image processing effect.
-        ApplyThreshold();
+        ApplyThreshold(thresholdTracker);
 
         ShowOutputImage();
     }
@@ -241,17 +241,46 @@ public partial class ImageProcessing : Form
 
         PrepareImageProcessing();
 
-        ApplyThreshold();
+        ApplyThreshold(CardDetectionThresholdTracker);
 
         CardDetection();
 
-        ApplyThreshold(true);
+        ApplyThreshold(CardDetectionThresholdTracker, true);
 
         TwoPassConnectedComponentLabeling();
 
         CoupleObjectsWithCards();
         DetectCardSymbols();
+        ShowInformation();
 
+        ShowOutputImage();
+    }
+
+    private void Erosion_button_Click(object sender, EventArgs e)
+    {
+        // Check if there is an input image.
+        if (inputImage == null)
+        {
+            MessageBox.Show("There is no input image!");
+            return;
+        }
+
+        PrepareImageProcessing();
+        Erosion(Erosion_slider.Value);
+        ShowOutputImage();
+    }
+
+    private void Dilation_button_Click(object sender, EventArgs e)
+    {
+        // Check if there is an input image.
+        if (inputImage == null)
+        {
+            MessageBox.Show("There is no input image!");
+            return;
+        }
+
+        PrepareImageProcessing();
+        detectedObjects[0].Dilation(Dilation_slider.Value);
         ShowOutputImage();
     }
 
@@ -310,32 +339,4 @@ public partial class ImageProcessing : Form
 
 
     #endregion
-
-    private void Detect_Click(object sender, EventArgs e)
-    {
-        // Check if there is an input image.
-        if (inputImage == null)
-        {
-            MessageBox.Show("There is no input image!");
-            return;
-        }
-
-        PrepareImageProcessing();
-        TwoPassConnectedComponentLabeling();
-        
-    }
-
-    private void Dilation_Click(object sender, EventArgs e)
-    {
-        // Check if there is an input image.
-        if (inputImage == null)
-        {
-            MessageBox.Show("There is no input image!");
-            return;
-        }
-
-        PrepareImageProcessing();
-        Dilation(5);
-        ShowOutputImage();
-    }
 }
